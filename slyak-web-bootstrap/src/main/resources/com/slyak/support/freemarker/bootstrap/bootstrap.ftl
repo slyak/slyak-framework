@@ -1,6 +1,6 @@
 <#ftl strip_whitespace=true>
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.support.freemarker.SlyakRequestContext" -->
-<#macro pagination value showNumber=9 relativeUrl="" size=20>
+<#macro pagination value showNumber=9 relativeUrl="" size=20 attributes...>
 <#-- @ftlvariable name="value" type="org.springframework.data.domain.Page" -->
     <#if value.totalPages gt 1>
         <#assign currentNumber = value.number/>
