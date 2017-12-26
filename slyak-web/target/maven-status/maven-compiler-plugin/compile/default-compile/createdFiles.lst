@@ -1,0 +1,13 @@
+com/slyak/support/freemarker/FmUtils.class
+com/slyak/support/freemarker/Fm.class
+com/slyak/support/freemarker/FmContext.class
+com/slyak/support/freemarker/ConfigurableObjectWrapper.class
+com/slyak/support/freemarker/FreemarkerConfig.class
+com/slyak/support/freemarker/SlyakRequestContext.class
+com/slyak/util/WebUtils.class
+com/slyak/support/freemarker/Pagination$PaginationBuilder.class
+com/slyak/support/freemarker/FreeMarkerConfigurer.class
+com/slyak/support/freemarker/SmartFreemarkerView.class
+com/slyak/support/freemarker/ResourcePatternTemplateLoader.class
+com/slyak/support/freemarker/Ignore.class
+com/slyak/support/freemarker/Pagination.class

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.slyak</groupId>
+        <artifactId>slyak-parent</artifactId>
+        <version>1.3.0.RELEASE</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>slyak-dependencies</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>slyak dependencies</description>
+    <url>https://github.com/slyak/slyak-framework/slyak-dependencies</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slyak.version>1.0.0-SNAPSHOT</slyak.version>
+        <commons-beanutils-version>1.9.1</commons-beanutils-version>
+        <commons-logging-version>1.2</commons-logging-version>
+        <commons-lang3-version>3.3.2</commons-lang3-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.slyak</groupId>
+                <artifactId>slyak-core</artifactId>
+                <version>${slyak.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.slyak</groupId>
+                <artifactId>slyak-web</artifactId>
+                <version>${slyak.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
