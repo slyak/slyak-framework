@@ -7,3 +7,6 @@
 <#macro joinAhead values=[] delimiter=" ">${delimiter}<#list values as v>${v}</#list></#macro>
 <#macro addClass values=[]><@joinAhead values=values delimiter=" "/></#macro>
 <#macro addStyle values=[]><@joinAhead values=values delimiter=";"/></#macro>
+<#macro resource url>${slyakRequestContext.getResource(url)}</#macro>
+<#macro css url>${slyakRequestContext.css(url)}</#macro>
+<#macro js url>${slyakRequestContext.js(url)}</#macro>
