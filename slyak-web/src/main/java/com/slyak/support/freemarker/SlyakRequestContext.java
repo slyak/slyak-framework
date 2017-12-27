@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,8 +25,8 @@ public class SlyakRequestContext extends RequestContext {
 
     private static final String ATTR_RESOURCE_HOLDER = "_a_r_holder";
     private static Map<String, String> version;
-    private static final String CSS_FORMAT = "<script src=\"%s\"></script>";
-    private static final String JS_FORMAT = "<link href=\"%s\" rel=\"stylesheet\">";
+    private static final String CSS_FORMAT = "<link href=\"%s\" rel=\"stylesheet\">";
+    private static final String JS_FORMAT = "<script src=\"%s\"></script>";
 
     static {
         version = Maps.newHashMap();
@@ -46,8 +47,17 @@ public class SlyakRequestContext extends RequestContext {
         }
     }
 
+    private String replaceQuery(String url, Map<String, ?> params) {
+        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromUriString(url);
+        return restParams(builder,params);
+    }
+
     private String replaceCurrentQuery(Map<String, ?> params) {
         UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(getRequest());
+        return restParams(builder, params);
+    }
+
+    private String restParams(UriComponentsBuilder builder, Map<String, ?> params) {
         if (!CollectionUtils.isEmpty(params)) {
             for (Map.Entry<String, ?> entry : params.entrySet()) {
                 builder.replaceQueryParam(entry.getKey(), entry.getValue());
@@ -57,6 +67,7 @@ public class SlyakRequestContext extends RequestContext {
         UriComponents encodedComponents = components.encode();
         return encodedComponents.toUri().toASCIIString();
     }
+
 
     //same as baidu google
 
@@ -90,12 +101,30 @@ public class SlyakRequestContext extends RequestContext {
                 .build();
     }
 
-    public String css(String url) {
-        return singleResource(url, CSS_FORMAT);
+    public String css(Object url) {
+        return determineResource(url, CSS_FORMAT);
     }
 
-    public String js(String url) {
-        return singleResource(url, JS_FORMAT);
+
+    public String js(Object url) {
+        return determineResource(url, JS_FORMAT);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String determineResource(Object url, String format) {
+        if (url instanceof Collection) {
+            return singleResources((Collection<String>) url, format);
+        } else {
+            return singleResource((String) url, format);
+        }
+    }
+
+    private String singleResources(Collection<String> urls, String format) {
+        StringBuilder builder = new StringBuilder();
+        for (String u : urls) {
+            builder.append(singleResource(u, format)).append(StringUtils.LF);
+        }
+        return builder.toString();
     }
 
     private String singleResource(String url, String format) {
@@ -110,7 +139,7 @@ public class SlyakRequestContext extends RequestContext {
         if (url.startsWith("http")) {
             return url;
         } else {
-            return getContextUrl(url, version);
+            return replaceQuery(url, version);
         }
     }
 
