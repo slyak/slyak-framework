@@ -6,7 +6,6 @@ import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.Map;
  * @since 1.3.0
  */
 public class SlyakRequestContext extends RequestContext {
-    private static final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private HttpServletRequest request;
 
     public SlyakRequestContext(HttpServletRequest request) {
@@ -77,10 +75,6 @@ public class SlyakRequestContext extends RequestContext {
                 .hasNext(hasNext)
                 .hasPrevious(hasPrevious)
                 .build();
-    }
-
-    public String getContextPath() {
-        return this.urlPathHelper.getOriginatingContextPath(this.request);
     }
 
     public static void main(String[] args) {
