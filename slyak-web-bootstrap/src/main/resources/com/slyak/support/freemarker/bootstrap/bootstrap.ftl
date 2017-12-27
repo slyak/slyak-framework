@@ -9,7 +9,7 @@
         <#assign end = pg.end/>
         <#assign hasPrevious = pg.hasPrevious/>
         <#assign hasNext = pg.hasNext/>
-    <nav aria-label="Slayk Pagination">
+    <nav aria-label="Slayk Pagination"<@slyak.attributes values=attributes/>>
         <ul class="pull-right pagination">
             <#if hasPrevious>
                 <li class="page-item">
