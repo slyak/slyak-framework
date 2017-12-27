@@ -18,10 +18,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.complier.version>1.8</java.complier.version>
+        <java.version>1.8</java.version>
         <slyak.version>1.0.0-SNAPSHOT</slyak.version>
         <commons-beanutils-version>1.9.1</commons-beanutils-version>
         <commons-logging-version>1.2</commons-logging-version>
         <commons-lang3-version>3.3.2</commons-lang3-version>
+        <jsoup.version>1.11.2</jsoup.version>
     </properties>
 
     <dependencies>
