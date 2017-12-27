@@ -17,24 +17,22 @@ import java.util.Map;
  * @since 1.3.0
  */
 public class SlyakRequestContext extends RequestContext {
-    private HttpServletRequest request;
-
     public SlyakRequestContext(HttpServletRequest request) {
-        this.request = request;
+        super(request);
     }
 
     public String query(String url, Map<String, ?> params) {
         if (StringUtils.isEmpty(url)) {
+            return replaceCurrentQuery(params);
+        } else {
             //placeholder
             //foo/{bar}?spam={spam}
             return getContextUrl(url, params);
-        } else {
-            return replaceCurrentQuery(params);
         }
     }
 
     private String replaceCurrentQuery(Map<String, ?> params) {
-        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(request);
+        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(getRequest());
         if (!CollectionUtils.isEmpty(params)) {
             for (Map.Entry<String, ?> entry : params.entrySet()) {
                 builder.replaceQueryParam(entry.getKey(), entry.getValue());
