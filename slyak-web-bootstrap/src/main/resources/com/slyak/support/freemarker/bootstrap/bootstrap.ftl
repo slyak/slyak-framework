@@ -1,11 +1,11 @@
 <#ftl strip_whitespace=true>
 <#macro cssAndJs>
     <@slyak.js url=[
-    '/webjars/jquery/2.1.1/jquery.js',
-    '/webjars/popper.js/1.11.1/dist/popper.js',
-    '/webjars/bootstrap/4.0.0/js/bootstrap.js'
+    '/webjars/jquery/3.0.0/jquery.min.js',
+    '/webjars/popper.js/1.11.1/dist/popper.min.js',
+    '/webjars/bootstrap/4.0.0/js/bootstrap.min.js'
     ]/>
-    <@slyak.css url=['/webjars/bootstrap/4.0.0/css/bootstrap.css']/>
+    <@slyak.css url=['/webjars/bootstrap/4.0.0/css/bootstrap.min.css']/>
 </#macro>
 <#--
 TODO:

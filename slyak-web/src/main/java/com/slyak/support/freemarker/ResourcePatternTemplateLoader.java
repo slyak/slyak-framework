@@ -34,7 +34,6 @@ public class ResourcePatternTemplateLoader implements TemplateLoader {
                 return resource;
             }
         }
-        log.info("Template {} not found.", name);
         return null;
     }
 
