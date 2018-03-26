@@ -1,4 +1,12 @@
 <#ftl strip_whitespace=true>
+<#macro cssAndJs>
+    <@slyak.js url=[
+    '/webjars/jquery/2.1.1/jquery.js',
+    '/webjars/popper.js/1.11.1/dist/popper.js',
+    '/webjars/bootstrap/4.0.0/js/bootstrap.js'
+    ]/>
+    <@slyak.css url=['/webjars/bootstrap/4.0.0/css/bootstrap.css']/>
+</#macro>
 <#--
 TODO:
 layout content
