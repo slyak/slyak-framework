@@ -251,7 +251,7 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
         } catch (UnreachableException ue) {
             int retry = getRetry();
             if (retry > 0 && count < this.retry) {
-                log.info("Connection :{} retrying {} times...", connection, count + 1);
+                log.debug("Connection :{} retrying {} times...", connection, count + 1);
                 return executeWithRetry(connection, count + 1);
             }
             throw ue;
