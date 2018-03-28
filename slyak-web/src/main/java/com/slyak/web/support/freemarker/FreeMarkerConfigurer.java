@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class FreeMarkerConfigurer extends org.springframework.web.servlet.view.f
     private static final String IMPORT_REGEX = "\\[#import\\s{1,}['\"](.*)['\"]\\s{1,}as\\s{1,}(.*)\\]";
     private static final String VARIABLE_REGEX = "\\[#--\\s{1,}@ftlvariable\\s{1,}name=\"(.*)\"\\s{1,}type=\"(.*)\"\\s{1,}--]";
 
-    private String implicitFile = "classpath:freemarker_implicit.ftl";
+    private String implicitFile = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/**/freemarker_implicit.ftl";
 
     private Map<String, String> imports = Maps.newHashMap();
     private Map<String, String> variables = Maps.newHashMap();
@@ -49,39 +50,43 @@ public class FreeMarkerConfigurer extends org.springframework.web.servlet.view.f
     protected void postProcessTemplateLoaders(List<TemplateLoader> templateLoaders) {
         super.postProcessTemplateLoaders(templateLoaders);
         try {
-            Resource resource = getResourceLoader().getResource(implicitFile);
-            if (resource.exists()) {
-                List<String> lines = IOUtils.readLines(resource.getInputStream(), Charset.forName("UTF-8"));
-                for (String line : lines) {
-                    //find root
+            ResourcePatternResolver resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(getResourceLoader());
+            Resource[] implicitFiles = resourcePatternResolver.getResources(implicitFile);
+
+            for (Resource resource : implicitFiles) {
+                if (resource.exists()) {
+                    List<String> lines = IOUtils.readLines(resource.getInputStream(), Charset.forName("UTF-8"));
+                    for (String line : lines) {
+                        //find root
 //                    List<String> rootVars = StringUtils.findGroupsIfMatch(FTLROOT_REGEX, line);
 //                    if (CollectionUtils.isNotEmpty(rootVars)) {
 //                        ftlroot = rootVars.get(0);
 //                        continue;
 //                    }
 
-                    List<String> imps = StringUtils.findGroupsIfMatch(IMPORT_REGEX, line);
-                    if (CollectionUtils.isNotEmpty(imps)) {
-                        imports.put(imps.get(1), imps.get(0));
-                        continue;
-                    }
+                        List<String> imps = StringUtils.findGroupsIfMatch(IMPORT_REGEX, line);
+                        if (CollectionUtils.isNotEmpty(imps)) {
+                            imports.put(imps.get(1), imps.get(0));
+                            continue;
+                        }
 
-                    List<String> vals = StringUtils.findGroupsIfMatch(VARIABLE_REGEX, line);
-                    if (CollectionUtils.isNotEmpty(vals)) {
-                        variables.put(vals.get(0), vals.get(1));
+                        List<String> vals = StringUtils.findGroupsIfMatch(VARIABLE_REGEX, line);
+                        if (CollectionUtils.isNotEmpty(vals)) {
+                            variables.put(vals.get(0), vals.get(1));
+                        }
                     }
                 }
-
-                //classpath
-                templateLoaders.add(
-                        new ResourcePatternTemplateLoader(
-                                getResourceLoader(),
-                                ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
-                                        + ClassUtils.classPackageAsResourcePath(this.getClass())
-                                +"/**/*.ftl"
-                        )
-                );
             }
+
+            //classpath
+            templateLoaders.add(
+                    new ResourcePatternTemplateLoader(
+                            getResourceLoader(),
+                            ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+                                    + ClassUtils.classPackageAsResourcePath(this.getClass())
+                                    + "/**/*.ftl"
+                    )
+            );
         } catch (Exception e) {
             //ignore?
         }

@@ -49,15 +49,15 @@ public class SlyakRequestContext extends RequestContext {
 
     private String replaceQuery(String url, Map<String, ?> params) {
         UriComponentsBuilder builder = ServletUriComponentsBuilder.fromUriString(url);
-        return restParams(builder,params);
+        return resetParams(builder,params);
     }
 
     private String replaceCurrentQuery(Map<String, ?> params) {
         UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(getRequest());
-        return restParams(builder, params);
+        return resetParams(builder, params);
     }
 
-    private String restParams(UriComponentsBuilder builder, Map<String, ?> params) {
+    private String resetParams(UriComponentsBuilder builder, Map<String, ?> params) {
         if (!CollectionUtils.isEmpty(params)) {
             for (Map.Entry<String, ?> entry : params.entrySet()) {
                 builder.replaceQueryParam(entry.getKey(), entry.getValue());

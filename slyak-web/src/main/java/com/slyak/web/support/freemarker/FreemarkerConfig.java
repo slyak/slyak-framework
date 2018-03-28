@@ -46,8 +46,6 @@ public class FreemarkerConfig {
     @Bean
     public FreeMarkerConfigurer freeMarkerConfigurer() {
         FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        String[] templateLoaderPath = properties.getTemplateLoaderPath();
-        configurer.setImplicitFile(templateLoaderPath[0] + "freemarker_implicit.ftl");
         applyProperties(configurer);
         return configurer;
     }

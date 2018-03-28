@@ -1,3 +1,4 @@
 [#ftl]
 [#-- @implicitly included --]
-[#import '/com/slyak/support/freemarker/slyak.ftl' as slyak]
+[#-- @ftlvariable name="MenuUtils" type="com.slyak.web.util.MenuUtils" --]
+[#import '/com/slyak/web/support/freemarker/slyak.ftl' as slyak]
