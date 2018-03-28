@@ -2,7 +2,7 @@ package com.slyak.web.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.slyak.web.domain.Menu;
+import com.slyak.web.ui.Menu;
 
 import java.util.List;
 

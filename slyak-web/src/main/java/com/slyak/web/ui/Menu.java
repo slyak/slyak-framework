@@ -1,4 +1,4 @@
-package com.slyak.web.domain;
+package com.slyak.web.ui;
 
 import lombok.Data;
 import org.springframework.util.CollectionUtils;

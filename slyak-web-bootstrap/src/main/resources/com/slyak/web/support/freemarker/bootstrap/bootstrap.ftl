@@ -15,6 +15,16 @@ alters badge breadcrumb buttons button group card carousel collapse dropdowns fo
 inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy tooltips
 -->
 
+<#macro table data=>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+    </table>
+</#macro>
+
 <#macro navbar brand menu>
     <#assign menuBeans=MenuUtils.build(menu)/>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -25,7 +35,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-        <#-- @ftlvariable name="menuBeans" type="java.util.List<com.slyak.web.domain.Menu>" -->
+        <#-- @ftlvariable name="menuBeans" type="java.util.List<com.slyak.web.ui.Menu>" -->
             <#list menuBeans as menu>
                 <#assign isActive= menu.isActive(slyakRequestContext.getRequestUri())/>
                 <#assign hasChildren = menu.hasChildren() />
