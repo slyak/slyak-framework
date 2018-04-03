@@ -38,10 +38,10 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
     @Getter
     private int retry = 2;
 
-    private Map<String, CrawlerSession> sessionCache = Maps.newConcurrentMap();
+    private volatile Map<String, CrawlerSession> sessionCache = Maps.newConcurrentMap();
 
     //initUrl->siteId
-    private Map<String, UrlExchange> exchangeMap = Maps.newConcurrentMap();
+    private volatile Map<String, UrlExchange> exchangeMap = Maps.newConcurrentMap();
 
     @Override
     public CrawlerSession getSession(String sessionId) {
@@ -75,7 +75,7 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
         if (response != null) {
             return createSession(exchange(initUrl), response);
         }
-        return null;
+        return initSession(initUrl);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
         return urlExchange != null && urlExchange.isLogin();
     }
 
-    private String exchange(String initUrl) {
+    private synchronized String exchange(String initUrl) {
         UrlExchange urlExchange = exchangeMap.get(initUrl);
         if (urlExchange == null) {
             urlExchange = new UrlExchange();
