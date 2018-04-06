@@ -2,12 +2,12 @@ package com.slyak.support.crawler.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.slyak.concurrent.ExecutorUtils;
 import com.slyak.support.crawler.CrawlerService;
 import com.slyak.support.crawler.CrawlerSession;
-import com.slyak.support.crawler.UrlExchange;
+import com.slyak.support.crawler.SessionCallback;
 import com.slyak.support.crawler.exception.InvalidSessionException;
 import com.slyak.support.crawler.exception.UnreachableException;
-import com.slyak.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.http.HttpMethod;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -29,89 +30,88 @@ import java.util.Map;
  * @since 1.3.0
  */
 @Slf4j
-public class JsoupCrawlerService implements CrawlerService<Document> {
+public abstract class JsoupCrawlerService implements CrawlerService<Document> {
 
     @Setter
-    private int timeoutMillis;
+    @Getter
+    private int timeoutMillis = 5000;
 
     @Setter
     @Getter
     private int retry = 2;
 
-    private volatile Map<String, CrawlerSession> sessionCache = Maps.newConcurrentMap();
+    @Setter
+    private SessionCallback sessionCallback = new DefaultSessionCallback();
 
-    //initUrl->siteId
-    private volatile Map<String, UrlExchange> exchangeMap = Maps.newConcurrentMap();
+    //{initUrl:[sessionIds]}
+    private final Map<String, List<String>> urlSessionIds = Maps.newConcurrentMap();
+
+    //{sessionId:session}
+    private final Map<String, CrawlerSession> sessions = Maps.newConcurrentMap();
+
+    private static final Object SESSION_LOCK = new Object();
 
     @Override
     public CrawlerSession getSession(String sessionId) {
-        CrawlerSession session = sessionCache.get(sessionId);
-        if (session == null) {
-            throw new InvalidSessionException();
+        synchronized (SESSION_LOCK) {
+            CrawlerSession session = sessions.get(sessionId);
+            if (session == null) {
+                throw new InvalidSessionException(sessionId);
+            } else {
+                return session;
+            }
         }
-        return session;
     }
 
     @Override
-    public List<String> getInitUrlSessions(String initUrl) {
-        UrlExchange urlExchange = exchangeMap.get(initUrl);
-        if (urlExchange == null) {
-            return Collections.emptyList();
-        } else {
-            List<String> ids = Lists.newArrayList();
-            String siteId = urlExchange.getSiteId();
-            for (CrawlerSession session : sessionCache.values()) {
-                if (siteId.equals(session.getSiteId())) {
-                    ids.add(session.getId());
-                }
+    public List<String> getUrlSessions(String initUrl) {
+        synchronized (SESSION_LOCK) {
+            List<String> sessionIds = urlSessionIds.get(initUrl);
+            if (sessionIds == null) {
+                return Collections.emptyList();
             }
-            return ids;
+            return sessionIds;
         }
+    }
+
+    @Override
+    public List<String> getUrlLoginSessions(String initUrl) {
+        List<String> urlSessions = getUrlSessions(initUrl);
+        List<String> filtered = Lists.newArrayList();
+        for (String sessionId : urlSessions) {
+            try {
+                CrawlerSession session = getSession(sessionId);
+                if (session.isLogin()) {
+                    filtered.add(sessionId);
+                }
+            } catch (InvalidSessionException e) {
+                //ignore
+            }
+        }
+        return filtered;
     }
 
     @Override
     public String initSession(String initUrl) {
         Connection.Response response = executeWithRetry(get(initUrl));
         if (response != null) {
-            return createSession(exchange(initUrl), response);
+            return createSession(initUrl, response);
         }
         return initSession(initUrl);
     }
 
-    @Override
-    public boolean isLogin(String initUrl) {
-        UrlExchange urlExchange = exchangeMap.get(initUrl);
-        return urlExchange != null && urlExchange.isLogin();
-    }
-
-    private synchronized String exchange(String initUrl) {
-        UrlExchange urlExchange = exchangeMap.get(initUrl);
-        if (urlExchange == null) {
-            urlExchange = new UrlExchange();
-            urlExchange.setSiteId(RandomStringUtils.randomAlphabetic(4));
-            exchangeMap.put(initUrl, urlExchange);
-        }
-        return urlExchange.getSiteId();
-    }
-
-    private String getInitUrl(String siteId) {
-        for (Map.Entry<String, UrlExchange> entry : exchangeMap.entrySet()) {
-            if (siteId.equals(entry.getValue().getSiteId())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-
-    private String createSession(String siteId, Connection.Response response) {
+    private String createSession(String initUrl, Connection.Response response) {
         CrawlerSession session = new CrawlerSession();
-        session.setSiteId(siteId);
+        session.setInitUrl(initUrl);
         mergeSession(session, response);
         String sessionId = RandomStringUtils.randomAlphabetic(6);
         session.setId(sessionId);
-        sessionCache.put(sessionId, session);
-        log.info("Session created :{}", session);
+        synchronized (SESSION_LOCK) {
+            List<String> sessionIds = urlSessionIds.computeIfAbsent(initUrl, url -> Lists.newArrayList());
+            sessionIds.add(sessionId);
+            sessions.put(sessionId, session);
+        }
+        sessionCallback.onSessionCreated(session, response);
         return sessionId;
     }
 
@@ -134,10 +134,10 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
     }
 
     @Override
-    public byte[] getCaptcha(String sessionId, String captchaUrl) throws UnreachableException {
+    public BufferedInputStream getCaptcha(String sessionId, String captchaUrl) throws UnreachableException {
         Connection.Response response = executeWithSession(sessionId, get(captchaUrl));
         if (response != null) {
-            return response.bodyAsBytes();
+            return response.bodyStream();
         }
         return null;
     }
@@ -150,9 +150,8 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
             return false;
         }
         CrawlerSession session = getSession(sessionId);
-        String initUrl = getInitUrl(session.getSiteId());
-        UrlExchange urlExchange = exchangeMap.get(initUrl);
-        urlExchange.setLogin(true);
+        log.info("Session with id {} logged in");
+        session.setLogin(true);
         return true;
     }
 
@@ -175,7 +174,13 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
             Map<String, String> headers,
             Map<String, String> data
     ) throws UnreachableException, InvalidSessionException {
+        log.info("start fetch url {}, session id is {}", url, sessionId);
         return safeParse(executeWithSession(sessionId, prepareFetch(method, url, headers, data)));
+    }
+
+    @Override
+    public Document fetchDocument(List<String> sessionIds, String url, HttpMethod method, Map<String, String> headers, Map<String, String> data) throws UnreachableException, InvalidSessionException {
+        return ExecutorUtils.startCompetition(index -> fetchDocument(sessionIds.get(index), url, method, headers, data), sessionIds.size(), timeoutMillis);
     }
 
     @Override
@@ -208,6 +213,7 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
     }
 
     private Connection config(String url) {
+        log.info("Destination url is {}", url);
         Connection connection = Jsoup.connect(url).ignoreContentType(true).followRedirects(true);
         if (timeoutMillis > 0) {
             connection.timeout(timeoutMillis);
@@ -228,22 +234,29 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
         }
         Connection.Response response = executeWithRetry(connection);
         //is session valid
-        String initUrl = getInitUrl(session.getSiteId());
-        if (!isSessionValid(initUrl, response)) {
-            log.info("Session is invalid, start to evict session objects.");
+        if (!isSessionValid(response)) {
+            log.info("Session with id {} is invalid, start to evict session objects.", sessionId);
             //evict session
-            sessionCache.remove(sessionId);
-            exchangeMap.get(initUrl).setLogin(false);
-            throw new InvalidSessionException();
+            destroySession(sessionId);
+            throw new InvalidSessionException(sessionId);
         }
         mergeSession(session, response);
         return response;
     }
 
-    protected boolean isSessionValid(String initUrl, Connection.Response response) {
-        log.info("Response url is : {}", response.url());
-        return !StringUtils.equals(initUrl, response.url().toString());
+    private void destroySession(String sessionId) {
+        synchronized (SESSION_LOCK) {
+            CrawlerSession session = sessions.get(sessionId);
+            if (session != null) {
+                String initUrl = session.getInitUrl();
+                urlSessionIds.get(initUrl).removeIf(sessionId::equals);
+                sessions.remove(sessionId);
+            }
+        }
+        sessionCallback.onSessionDestroyed(sessionId);
     }
+
+    protected abstract boolean isSessionValid(Connection.Response response);
 
     private Connection.Response executeWithRetry(Connection connection, int count) {
         try {
@@ -260,7 +273,9 @@ public class JsoupCrawlerService implements CrawlerService<Document> {
 
     private Connection.Response execute(Connection connection) {
         try {
-            return connection.execute();
+            Connection.Response response = connection.execute();
+            log.info("Response url is {}", response.url());
+            return response;
         } catch (IOException e) {
             throw new UnreachableException(connection.request().url().toString());
         }
