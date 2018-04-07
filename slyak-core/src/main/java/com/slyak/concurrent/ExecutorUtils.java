@@ -26,10 +26,10 @@ public class ExecutorUtils {
             executorService.execute(() -> {
                 try {
                     R result = competition.start(test);
-                    log.info("Runner {} got result {}", test, result);
+                    log.info("Runner {} finished competition", test);
                     synchronized (holder) {
                         if (holder.getResult() == null) {
-                            log.info("Runner {} is the winner",test);
+                            log.info("Runner {} is the winner, result is {}", test);
                             holder.setResult(result);
                         }
                     }
