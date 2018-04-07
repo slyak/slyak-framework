@@ -59,10 +59,10 @@
 
     <!-- 代码库 -->
     <scm>
-        <connection>scm:git:git@github.com:slyak/slyak-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:slyak/slyak-framework.git</developerConnection>
-        <url>git@github.com:slyak/slyak-framework.git</url>
-      <tag>slyak-framework-build-1.0.1.RELEASE</tag>
+        <connection>scm:git:https://github.com/slyak/slyak-framework.git</connection>
+        <developerConnection>scm:git:https://github.com/slyak/slyak-framework.git</developerConnection>
+        <url>https://github.com/slyak/slyak-framework.git</url>
+        <tag>slyak-framework-build-1.0.1.RELEASE</tag>
   </scm>
 
     <build>
