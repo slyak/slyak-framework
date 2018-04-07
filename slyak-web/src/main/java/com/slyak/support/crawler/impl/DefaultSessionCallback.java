@@ -16,6 +16,7 @@ public class DefaultSessionCallback implements SessionCallback {
     @Override
     public void onSessionCreated(CrawlerSession session, Connection.Response response) {
         log.info("Session created {}", session);
+        session.setBodyStream(response.bodyStream());
     }
 
     @Override

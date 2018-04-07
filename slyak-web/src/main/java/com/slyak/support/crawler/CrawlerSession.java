@@ -20,5 +20,5 @@ public class CrawlerSession implements Serializable {
     private String initUrl;
     private Map<String, String> cookies;
     private boolean login;
-    private BufferedInputStream captcha;
+    private BufferedInputStream bodyStream;
 }

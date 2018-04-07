@@ -138,9 +138,9 @@ public abstract class JsoupCrawlerService implements CrawlerService<Document> {
         CrawlerSession session = getSession(sessionId);
         synchronized (SESSION_LOCK) {
             if (captchaUrl.equals(session.getInitUrl())) {
-                BufferedInputStream captcha = session.getCaptcha();
+                BufferedInputStream captcha = session.getBodyStream();
                 if (captcha != null) {
-                    session.setCaptcha(null);
+                    session.setBodyStream(null);
                     return captcha;
                 }
             }
