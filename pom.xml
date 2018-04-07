@@ -61,9 +61,8 @@
 
     <!-- 代码库 -->
     <scm>
-        <connection>scm:git:git@github.com:slyak/slyak-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:slyak/slyak-framework.git</developerConnection>
-        <url>git@github.com:slyak/slyak-framework.git</url>
+        <connection>https://github.com/slyak/slyak-framework.git</connection>
+        <url>https://github.com/slyak/slyak-framework.git</url>
     </scm>
 
     <build>
