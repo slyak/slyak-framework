@@ -135,6 +135,16 @@ public abstract class JsoupCrawlerService implements CrawlerService<Document> {
 
     @Override
     public BufferedInputStream getCaptcha(String sessionId, String captchaUrl) throws UnreachableException {
+        CrawlerSession session = getSession(sessionId);
+        synchronized (SESSION_LOCK) {
+            if (captchaUrl.equals(session.getInitUrl())) {
+                BufferedInputStream captcha = session.getCaptcha();
+                if (captcha != null) {
+                    session.setCaptcha(null);
+                    return captcha;
+                }
+            }
+        }
         Connection.Response response = executeWithSession(sessionId, get(captchaUrl));
         if (response != null) {
             return response.bodyStream();

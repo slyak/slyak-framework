@@ -3,6 +3,7 @@ package com.slyak.support.crawler;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.BufferedInputStream;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -19,4 +20,5 @@ public class CrawlerSession implements Serializable {
     private String initUrl;
     private Map<String, String> cookies;
     private boolean login;
+    private BufferedInputStream captcha;
 }
