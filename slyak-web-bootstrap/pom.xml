@@ -6,7 +6,7 @@
         <groupId>com.slyak</groupId>
         <artifactId>slyak-dependencies</artifactId>
         <version>1.0.1-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <relativePath>../slyak-dependencies</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
