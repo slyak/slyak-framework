@@ -1,13 +1,14 @@
-package com.slyak.support.crawler.impl;
+package com.slyak.web.support.crawler.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.slyak.concurrent.ExecutorUtils;
-import com.slyak.support.crawler.CrawlerService;
-import com.slyak.support.crawler.CrawlerSession;
 import com.slyak.support.crawler.SessionCallback;
-import com.slyak.support.crawler.exception.InvalidSessionException;
-import com.slyak.support.crawler.exception.UnreachableException;
+import com.slyak.support.crawler.impl.DefaultSessionCallback;
+import com.slyak.web.support.crawler.CrawlerService;
+import com.slyak.web.support.crawler.CrawlerSession;
+import com.slyak.web.support.crawler.exception.InvalidSessionException;
+import com.slyak.web.support.crawler.exception.UnreachableException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,6 @@
 package com.slyak.support.crawler;
 
+import com.slyak.web.support.crawler.CrawlerSession;
 import org.jsoup.Connection;
 
 /**

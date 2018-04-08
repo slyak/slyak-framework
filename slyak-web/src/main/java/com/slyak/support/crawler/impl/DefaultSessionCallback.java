@@ -1,7 +1,7 @@
 package com.slyak.support.crawler.impl;
 
-import com.slyak.support.crawler.CrawlerSession;
 import com.slyak.support.crawler.SessionCallback;
+import com.slyak.web.support.crawler.CrawlerSession;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 
