@@ -29,7 +29,7 @@ public class ExecutorUtils {
                     log.info("Runner {} finished competition", test);
                     synchronized (holder) {
                         if (holder.getResult() == null) {
-                            log.info("Runner {} is the winner, result is {}", test);
+                            log.info("Runner {} is the winner, result is {}", test, result);
                             holder.setResult(result);
                         }
                     }
