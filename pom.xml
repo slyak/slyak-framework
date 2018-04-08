@@ -58,7 +58,7 @@
     <scm>
         <connection>scm:git:https://github.com/slyak/slyak-framework.git</connection>
         <url>scm:git:https://github.com/slyak/slyak-framework.git</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
   </scm>
 
     <build>
