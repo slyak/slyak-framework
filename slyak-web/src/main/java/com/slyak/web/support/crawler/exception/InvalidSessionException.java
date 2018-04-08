@@ -9,7 +9,7 @@ import org.springframework.core.NestedRuntimeException;
  * @since 1.3.0
  */
 public class InvalidSessionException extends NestedRuntimeException {
-    public InvalidSessionException() {
-        super("Invalid session exception");
+    public InvalidSessionException(String sessionId) {
+        super("Session " + sessionId + " is invalid");
     }
 }
