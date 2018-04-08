@@ -15,14 +15,45 @@ alters badge breadcrumb buttons button group card carousel collapse dropdowns fo
 inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy tooltips
 -->
 
-<#macro table data=>
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-    </table>
+<#macro model id title class="modal-lg" onShown='' onSubmit=''>
+<div class="modal" tabindex="-1" role="dialog" id="${id}">
+    <div class="modal-dialog ${class}" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">${title}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>加载中 ...</p>
+            </div>
+            <div class="modal-footer">
+                <#if onSubmit?has_content>
+                <button type="button" class="btn btn-primary">保存</button>
+                </#if>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var modal${id} = $('#${id}');
+    var form${id} = modal${id}.find("form");
+        <#if onShown?has_content>
+        modal${id}.on('shown.bs.modal', function (event) {
+            modal${id}.find(".modal-body > p").html(${onShown}($(this), $(event.relatedTarget)));
+        });
+        </#if>
+        modal${id}.find(".btn-primary").on("click", function (event) {
+            modal${id}.find("form").trigger("submit");
+        });
+        <#if onSubmit?has_content>
+        modal${id}.find("form").on("submit", function (event) {
+            eval('${onSubmit}')
+        });
+        </#if>
+</script>
 </#macro>
 
 <#macro navbar brand menu>
