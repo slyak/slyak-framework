@@ -8,7 +8,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>slyak-framework-build</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4.RELEASE</version>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>slyak framework</description>
@@ -58,7 +58,7 @@
     <scm>
         <connection>scm:git:https://github.com/slyak/slyak-framework.git</connection>
         <url>scm:git:https://github.com/slyak/slyak-framework.git</url>
-        <tag>HEAD</tag>
+        <tag>slyak-framework-build-1.0.4.RELEASE</tag>
   </scm>
 
     <build>
