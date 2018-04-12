@@ -34,5 +34,9 @@
             <artifactId>jquery</artifactId>
             <version>${jquery.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -42,7 +42,12 @@ public abstract class JsoupCrawlerService implements CrawlerService<Document> {
     private int retry = 2;
 
     @Setter
+    private boolean randomIP = true;
+
+    @Setter
     private SessionCallback sessionCallback = new DefaultSessionCallback();
+
+    private static final String X_FORWARDED_FOR = "X-Forwarded-For";
 
     //{initUrl:[sessionIds]}
     private final Map<String, List<String>> urlSessionIds = Maps.newConcurrentMap();
@@ -226,11 +231,26 @@ public abstract class JsoupCrawlerService implements CrawlerService<Document> {
     private Connection config(String url) {
         log.info("Destination url is {}", url);
         Connection connection = Jsoup.connect(url).ignoreContentType(true).followRedirects(true);
+        if (randomIP) {
+            connection.header(X_FORWARDED_FOR, randomIP());
+        }
         if (timeoutMillis > 0) {
             connection.timeout(timeoutMillis);
         }
         return connection;
     }
+
+    private String randomIP() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            if (i != 0) {
+                builder.append(".");
+            }
+            builder.append((int) (Math.random() * 254));
+        }
+        return builder.toString();
+    }
+
 
     private Connection.Response executeWithRetry(Connection connection) {
         return executeWithRetry(connection, 0);

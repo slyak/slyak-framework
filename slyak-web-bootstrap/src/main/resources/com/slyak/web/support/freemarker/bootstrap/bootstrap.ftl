@@ -2,9 +2,9 @@
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#macro cssAndJs>
     <@slyak.js url=[
-    '/webjars/jquery/3.0.0/jquery.min.js',
-    '/webjars/popper.js/1.11.1/dist/popper.min.js',
-    '/webjars/bootstrap/4.0.0/js/bootstrap.min.js'
+    '/webjars/jquery/jquery.min.js',
+    '/webjars/popper.js/dist/popper.min.js',
+    '/webjars/bootstrap/js/bootstrap.min.js'
     ]/>
     <@slyak.css url=['/webjars/bootstrap/4.0.0/css/bootstrap.min.css']/>
 </#macro>
