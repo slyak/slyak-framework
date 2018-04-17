@@ -30,7 +30,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
             </div>
             <div class="modal-footer">
                 <#if onSubmit?has_content>
-                <button type="button" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-primary">保存</button>
                 </#if>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
             </div>
@@ -45,9 +45,9 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
             modal${id}.find(".modal-body > p").html(${onShown}($(this), $(event.relatedTarget)));
         });
         </#if>
-        modal${id}.find(".btn-primary").on("click", function (event) {
-            modal${id}.find("form").trigger("submit");
-        });
+    modal${id}.find(".btn-primary").on("click", function (event) {
+        modal${id}.find("form").trigger("submit");
+    });
         <#if onSubmit?has_content>
         modal${id}.find("form").on("submit", function (event) {
             eval('${onSubmit}')
@@ -90,7 +90,8 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                         </div>
                     </li>
                 <#else >
-                    <a class="nav-link" href="#">${menu.title}<#if isActive> <span
+                    <a class="nav-link"
+                       href="${slyakRequestContext.getContextUrl(menu.url)}">${menu.title}<#if isActive> <span
                             class="sr-only">(current)</span></#if></a>
                 </#if>
                 </li>
