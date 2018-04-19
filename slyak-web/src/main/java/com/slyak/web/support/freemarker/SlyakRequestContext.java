@@ -49,7 +49,7 @@ public class SlyakRequestContext extends RequestContext {
 
     private String replaceQuery(String url, Map<String, ?> params) {
         UriComponentsBuilder builder = ServletUriComponentsBuilder.fromUriString(url);
-        return resetParams(builder,params);
+        return resetParams(builder, params);
     }
 
     private String replaceCurrentQuery(Map<String, ?> params) {
@@ -141,6 +141,10 @@ public class SlyakRequestContext extends RequestContext {
         } else {
             return replaceQuery(url, version);
         }
+    }
+
+    public boolean isSameUrl(String url) {
+        return getRequestUri().equals(url.replaceFirst("(.*)(\\?.*)", "$1"));
     }
 
     @SuppressWarnings("unchecked")

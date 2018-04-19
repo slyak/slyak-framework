@@ -15,6 +15,20 @@ alters badge breadcrumb buttons button group card carousel collapse dropdowns fo
 inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy tooltips
 -->
 
+<#macro breadcrumb data=[{'title':'Home','url':'/'}]>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <#list data as d>
+            <#if d_has_next>
+            <li class="breadcrumb-item"><a href="<@slyak.query url="${d.url}"/>">${d.title}</a></li>
+            <#else >
+                <li class="breadcrumb-item active" aria-current="page">${d.title}</li>
+            </#if>
+        </#list>
+    </ol>
+</nav>
+</#macro>
+
 <#macro model id title class="modal-lg" onShown='' onSubmit=''>
 <div class="modal" tabindex="-1" role="dialog" id="${id}">
     <div class="modal-dialog ${class}" role="document">
