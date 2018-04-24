@@ -147,6 +147,10 @@ public class SlyakRequestContext extends RequestContext {
         return getRequestUri().equals(url.replaceFirst("(.*)(\\?.*)", "$1"));
     }
 
+    public String randomAlphanumeric(int count){
+        return RandomStringUtils.randomAlphanumeric(count);
+    }
+
     @SuppressWarnings("unchecked")
     private boolean addResource(String url) {
         Set<String> resources = (Set<String>) getRequest().getAttribute(ATTR_RESOURCE_HOLDER);
@@ -157,7 +161,6 @@ public class SlyakRequestContext extends RequestContext {
     }
 
     public static void main(String[] args) {
-        Set<String> test = Sets.newHashSet("test");
-        System.out.println(test.add("test1"));
+        System.out.println(RandomStringUtils.randomAlphanumeric(10));
     }
 }

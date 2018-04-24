@@ -10,3 +10,4 @@
 <#macro resource url>${slyakRequestContext.getResource(url)}</#macro>
 <#macro css url>${slyakRequestContext.css(url)}</#macro>
 <#macro js url>${slyakRequestContext.js(url)}</#macro>
+<#macro randomAlphanumeric count=5>${slyakRequestContext.randomAlphanumeric(count)}</#macro>

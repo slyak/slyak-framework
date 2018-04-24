@@ -20,13 +20,63 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     <ol class="breadcrumb">
         <#list data as d>
             <#if d_has_next>
-            <li class="breadcrumb-item"><a href="<@slyak.query url="${d.url}"/>">${d.title}</a></li>
+                <li class="breadcrumb-item"><a href="<@slyak.query url="${d.url}"/>">${d.title}</a></li>
             <#else >
                 <li class="breadcrumb-item active" aria-current="page">${d.title}</li>
             </#if>
         </#list>
     </ol>
 </nav>
+</#macro>
+
+<#macro input name type="text" editable=true value="" class="">
+<input type="${type}"
+       class="form-control${editable?string('','-plaintext')} ${class}"${editable?string(' ',' readonly')}
+       value="${value}" name="${name}"/>
+</#macro>
+
+<#macro radios name value='' data=[{'title':'test','value':'test'}]>
+    <#list data as d>
+        <#assign idTmp>radio_<@slyak.randomAlphanumeric/></#assign>
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="${idTmp}" name="${name}"
+               class="custom-control-input"<#if (!(value?has_content) && d_index==0) || value==d.value> checked</#if>>
+        <label class="custom-control-label" for="${idTmp}">${d.title}</label>
+    </div>
+    </#list>
+</#macro>
+
+<#macro textarea name editable=true rows=5 value="" class="">
+<textarea
+        class="form-control${editable?string('','-plaintext')} ${class}"${editable?string(' ',' readonly')}
+        name="${name}" rows="${rows}">${value}</textarea>
+</#macro>
+
+<#macro select name editable=true options=[{'title':'test','value':'test'}] value="" attributes...>
+<select class="custom-select"<@slyak.attributes values=attributes/>>
+    <#list options as opt>
+        <option<#if value==opt.value> selected</#if> value="${opt.value}">${opt.title}</option>
+    </#list>
+</select>
+</#macro>
+
+<#macro form action enctype="application/x-www-form-urlencoded" attributes...>
+<form action="<@slyak.query url=action/>" method="post" autocomplete="off"
+      enctype="${enctype}" <@slyak.attributes values=attributes/>>
+    <input style="display:none" type="text" name="fakename">
+    <input style="display:none" type="password" name="fakepwd">
+    <#nested />
+</form>
+</#macro>
+
+<#macro formgroup label left=2 right=10 required=false>
+<div class="form-group row">
+    <label for="staticEmail" class="col-sm-${left} col-form-label">${label}<#if required><span
+            class="text-danger">*</span></#if></label>
+    <div class="col-sm-${right}">
+        <#nested />
+    </div>
+</div>
 </#macro>
 
 <#macro model id title class="modal-lg" onShown='' onSubmit=''>
@@ -70,8 +120,40 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </script>
 </#macro>
 
-<#macro navbar brand menu>
-    <#assign menuBeans=MenuUtils.build(menu)/>
+<#macro _menus menuBeans>
+<#-- @ftlvariable name="menuBeans" type="java.util.List<com.slyak.web.ui.Menu>" -->
+    <#list menuBeans as menu>
+        <#assign isActive= menu.isActive(slyakRequestContext.getRequestUri())/>
+        <#assign hasChildren = menu.hasChildren() />
+    <li class="nav-item<#if isActive> active</#if><#if menu.hasChildren()> dropdown</#if>">
+        <#if hasChildren>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+            ${menu.title}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <#list menu.children as subMenu>
+                    <#if menu.title == 'separator'>
+                        <div class="dropdown-divider"></div>
+                    <#else>
+                        <a class="dropdown-item"
+                           href="${slyakRequestContext.getContextUrl(subMenu.url)}">${subMenu.title}</a>
+                    </#if>
+                </#list>
+            </div>
+        </li>
+        <#else >
+        <a class="nav-link"
+           href="${slyakRequestContext.getContextUrl(menu.url)}">${menu.title}<#if isActive> <span
+                class="sr-only">(current)</span></#if></a>
+        </#if>
+    </li>
+    </#list>
+</#macro>
+
+<#macro navbar brand left=[] right=[]>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">${brand}</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -79,38 +161,18 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-        <#-- @ftlvariable name="menuBeans" type="java.util.List<com.slyak.web.ui.Menu>" -->
-            <#list menuBeans as menu>
-                <#assign isActive= menu.isActive(slyakRequestContext.getRequestUri())/>
-                <#assign hasChildren = menu.hasChildren() />
-            <li class="nav-item<#if isActive> active</#if><#if menu.hasChildren()> dropdown</#if>">
-                <#if hasChildren>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">
-                        ${menu.title}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <#list menu.children as subMenu>
-                                <#if menu.title == 'separator'>
-                                    <div class="dropdown-divider"></div>
-                                <#else>
-                                    <a class="dropdown-item"
-                                       href="${slyakRequestContext.getContextUrl(subMenu.url)}">${subMenu.title}</a>
-                                </#if>
-                            </#list>
-                        </div>
-                    </li>
-                <#else >
-                    <a class="nav-link"
-                       href="${slyakRequestContext.getContextUrl(menu.url)}">${menu.title}<#if isActive> <span
-                            class="sr-only">(current)</span></#if></a>
-                </#if>
-                </li>
-            </#list>
-        </ul>
+        <#if left?size gt 0>
+            <#assign menuBeansLeft=MenuUtils.build(left)/>
+            <ul class="navbar-nav mr-auto">
+                <@_menus menuBeansLeft/>
+            </ul>
+        </#if>
+        <#if right?size gt 0>
+            <#assign menuBeansRight=MenuUtils.build(right)/>
+            <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                <@_menus menuBeansRight/>
+            </ul>
+        </#if>
         <#nested />
     </div>
 </nav>
