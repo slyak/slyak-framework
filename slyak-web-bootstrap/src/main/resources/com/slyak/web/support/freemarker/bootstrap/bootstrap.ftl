@@ -3,10 +3,10 @@
 <#macro cssAndJs>
     <@slyak.js url=[
     '/webjars/jquery/jquery.min.js',
-    '/webjars/popper.js/dist/popper.min.js',
+    '/webjars/popper.js/popper.min.js',
     '/webjars/bootstrap/js/bootstrap.min.js'
     ]/>
-    <@slyak.css url=['/webjars/bootstrap/4.0.0/css/bootstrap.min.css']/>
+    <@slyak.css url=['/webjars/bootstrap/css/bootstrap.min.css']/>
 </#macro>
 <#--
 TODO:
