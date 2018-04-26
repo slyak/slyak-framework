@@ -38,6 +38,9 @@ public class SlyakRequestContext extends RequestContext {
     }
 
     public String query(String url, Map<String, ?> params) {
+        if (StringUtils.startsWithIgnoreCase(url, "javascript")) {
+            return url;
+        }
         if (StringUtils.isEmpty(url)) {
             return replaceCurrentQuery(params);
         } else {
@@ -147,7 +150,7 @@ public class SlyakRequestContext extends RequestContext {
         return getRequestUri().equals(url.replaceFirst("(.*)(\\?.*)", "$1"));
     }
 
-    public String randomAlphanumeric(int count){
+    public String randomAlphanumeric(int count) {
         return RandomStringUtils.randomAlphanumeric(count);
     }
 

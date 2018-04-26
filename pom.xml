@@ -111,6 +111,8 @@
         <module>slyak-core</module>
         <module>slyak-web</module>
         <module>slyak-web-bootstrap</module>
+        <module>slyak-web-ace</module>
+        <module>slyak-web-socket</module>
     </modules>
 
 </project>
