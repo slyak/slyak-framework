@@ -1,5 +1,6 @@
 package com.slyak.web.support.freemarker;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -152,6 +153,10 @@ public class SlyakRequestContext extends RequestContext {
 
     public String randomAlphanumeric(int count) {
         return RandomStringUtils.randomAlphanumeric(count);
+    }
+
+    public String json(Object o){
+        return JSON.toJSONString(o);
     }
 
     @SuppressWarnings("unchecked")

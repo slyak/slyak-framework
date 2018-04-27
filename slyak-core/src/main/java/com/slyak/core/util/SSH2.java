@@ -4,6 +4,7 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,13 +23,9 @@ public class SSH2 {
 
     private Connection conn;
 
-    private Session session;
 
     private SCPClient scpClient;
 
-    private InputStream stderr;
-
-    private InputStream stdout;
 
     private boolean authSuccess = false;
 
@@ -50,28 +47,39 @@ public class SSH2 {
         return authSuccess;
     }
 
-    public void execCommand(String command, StdCallback callback) {
+    public SSH2 execCommand(String command, StdCallback callback) {
+        Session session = null;
         try {
-            if (session == null) {
-                session = conn.openSession();
-                this.stderr = new StreamGobbler(session.getStderr());
-                this.stdout = new StreamGobbler(session.getStdout());
-            }
+            session = conn.openSession();
+            @Cleanup InputStream stderr = new StreamGobbler(session.getStderr());
+            @Cleanup InputStream stdout = new StreamGobbler(session.getStdout());
             session.execCommand(command);
             BufferedReader brerr = new BufferedReader(new InputStreamReader(stderr));
             BufferedReader brout = new BufferedReader(new InputStreamReader(stdout));
             while (true) {
                 String out = brout.readLine();
-                String error = brerr.readLine();
+                String error = null;
+                if (out == null) {
+                    error = brerr.readLine();
+                }
                 if (out == null && error == null) {
                     break;
                 }
-                callback.processOut(out);
-                callback.processError(error);
+                if (out != null) {
+                    callback.processOut(out);
+                }
+                if (error != null) {
+                    callback.processError(error);
+                }
             }
         } catch (Exception e) {
-            log.error("Error occurred", e);
+            log.error("Error occurred {}", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
+        return this;
     }
 
     public SCPClient scpClient() {
@@ -81,8 +89,7 @@ public class SSH2 {
         return scpClient;
     }
 
-    public void close() {
-        session.close();
+    public void disconnect() {
         conn.close();
     }
 
