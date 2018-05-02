@@ -29,10 +29,10 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </nav>
 </#macro>
 
-<#macro input name type="text" editable=true value="" class="">
+<#macro input name type="text" editable=true value="" class="" placeholder="">
 <input type="${type}"
        class="form-control${editable?string('','-plaintext')} ${class}"${editable?string(' ',' readonly')}
-       value="${value}" name="${name}"/>
+       value="${value}" name="${name}" placeholder="${placeholder}"/>
 </#macro>
 
 <#macro radios name value='' data=[{'title':'test','value':'test'}]>
@@ -217,4 +217,19 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         </ul>
     </nav>
     </#if>
+</#macro>
+
+<#macro keywordSearch id="searchArea">
+<div class="input-group" id="${id}">
+    <@input placeholder="请输入关键字" name="keyword" value=RequestParameters.keyword/>
+    <div class="input-group-append">
+        <button type="button" class="btn input-group-text btnSearch">搜索</button>
+    </div>
+</div>
+<script>
+    $(".btnSearch").click(function () {
+        var current = location.href;
+        location.href = current.substring(0, current.indexOf("?"))+"?keyword="+$('#${id}').find('input[name=keyword]').val();
+    })
+</script>
 </#macro>
