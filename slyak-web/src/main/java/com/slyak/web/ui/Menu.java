@@ -27,7 +27,7 @@ public class Menu implements Serializable {
             }
             return false;
         } else {
-            return requestUri.contains(url.replaceFirst("(.*)(\\?.*)","$1"));
+            return requestUri.startsWith(url.replaceFirst("(.*)(\\?.*)","$1"));
         }
     }
 
