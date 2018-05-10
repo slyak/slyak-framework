@@ -1,12 +1,24 @@
 <#ftl strip_whitespace=true>
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
+
+<#--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/piexif.min.js" type="text/javascript"></script>
+<!-- sortable.min.js is only needed if you wish to sort / rearrange files in initial preview.
+    This must be loaded before fileinput.min.js &ndash;&gt;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/sortable.min.js" type="text/javascript"></script>
+<!-- purify.min.js is only needed if you wish to purify HTML content in your preview for
+    HTML files. This must be loaded before fileinput.min.js &ndash;&gt;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/purify.min.js" type="text/javascript"></script>-->
+
 <#macro cssAndJs>
     <@slyak.js url=[
     '/webjars/jquery/jquery.min.js',
-    '/webjars/popper.js/popper.min.js',
+    '/webjars/popper.js/umd/popper-utils.min.js',
+    '/webjars/popper.js/umd/popper.min.js',
     '/webjars/bootstrap/js/bootstrap.min.js'
     ]/>
-    <@slyak.css url=['/webjars/bootstrap/css/bootstrap.min.css']/>
+    <@slyak.css url=[
+    '/webjars/bootstrap/css/bootstrap.min.css'
+    ]/>
 </#macro>
 <#--
 TODO:
@@ -35,6 +47,16 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
        value="${value}" name="${name}" placeholder="${placeholder}"/>
 </#macro>
 
+<#macro a href title modal=false showSubmit=false attributes...>
+    <#assign modalId>modal_<@slyak.randomAlphanumeric/></#assign>
+    <#assign _attrs = attributes/>
+    <#if modal>
+        <@modalIframe id=modalId title=title url=href showSubmit=showSubmit/>
+        <#assign _attrs=_attrs+{'data-toggle':'modal','data-target':'#${modalId}'}/>
+    </#if>
+<a href="<@slyak.query url=href/>"<@slyak.attributes values=_attrs/>>${title}</a>
+</#macro>
+
 <#macro radios name value='' data=[{'title':'test','value':'test'}]>
     <#list data as d>
         <#assign idTmp>radio_<@slyak.randomAlphanumeric/></#assign>
@@ -46,10 +68,21 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     </#list>
 </#macro>
 
-<#macro textarea name editable=true rows=5 value="" class="">
+<#macro checkboxes name values=[] data=[{'title':'test','value':'test'}]>
+    <#list data as d>
+        <#assign idTmp>checkbox_<@slyak.randomAlphanumeric/></#assign>
+    <div class="custom-control custom-checkbox custom-control-inline">
+        <input type="checkbox" id="${idTmp}" name="${name}"
+               class="custom-control-input"<#if values?seq_contains(d.value)> checked</#if>>
+        <label class="custom-control-label" for="${idTmp}">${d.title}</label>
+    </div>
+    </#list>
+</#macro>
+
+<#macro textarea name editable=true rows=5 class="">
 <textarea
         class="form-control${editable?string('','-plaintext')} ${class}"${editable?string(' ',' readonly')}
-        name="${name}" rows="${rows}">${value}</textarea>
+        name="${name}" rows="${rows}"><#nested /></textarea>
 </#macro>
 
 <#macro select name editable=true options=[{'title':'test','value':'test'}] value="" attributes...>
@@ -60,7 +93,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </select>
 </#macro>
 
-<#macro formgroup label left=2 right=10 required=false>
+<#macro formgroup label left=2 right=12-left required=false>
 <div class="form-group row">
     <label for="staticEmail" class="col-sm-${left} col-form-label">${label}<#if required><span
             class="text-danger">*</span></#if></label>
@@ -70,7 +103,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </div>
 </#macro>
 
-<#macro model id title class="modal-lg" onShown='' onSubmit=''>
+<#macro modal id title content="加载中..." class="modal-lg" onShown='' onSubmit=''>
 <div class="modal" tabindex="-1" role="dialog" id="${id}">
     <div class="modal-dialog ${class}" role="document">
         <div class="modal-content">
@@ -81,7 +114,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 </button>
             </div>
             <div class="modal-body">
-                <p>加载中 ...</p>
+                <p>${content}</p>
             </div>
             <div class="modal-footer">
                 <#if onSubmit?has_content>
@@ -93,15 +126,24 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     </div>
 </div>
 <script>
+        <#nested />
     var modal${id} = $('#${id}');
     var form${id} = modal${id}.find("form");
         <#if onShown?has_content>
         modal${id}.on('shown.bs.modal', function (event) {
-            modal${id}.find(".modal-body > p").html(${onShown}($(this), $(event.relatedTarget)));
+            var ret = ${onShown}($(this), modal${id});
+            modal${id}.find(".modal-body > p").empty().append(ret);
         });
         </#if>
     modal${id}.find(".btn-primary").on("click", function (event) {
-        modal${id}.find("form").trigger("submit");
+        var form = modal${id}.find("form");
+        if (form.length > 0) {
+            form.trigger("submit");
+        } else {
+            <#if onSubmit?has_content>
+                ${onSubmit}($(this), modal${id});
+            </#if>
+        }
     });
         <#if onSubmit?has_content>
         modal${id}.find("form").on("submit", function (event) {
@@ -109,6 +151,28 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         });
         </#if>
 </script>
+</#macro>
+
+<#macro modalIframe id title url='' class="modal-lg" showSubmit=false>
+    <#assign onSubmit=showSubmit?string("submitIframe_${id}","")/>
+    <@modal id=id title=title class=class onSubmit="${onSubmit}" onShown="createIframe_${id}">
+    var frame_${id};
+    function createIframe_${id}(btn,modal){
+    frame_${id} = <@slyakUI.iframe src='${url}'/>;
+    return frame_${id};
+    }
+        <#if showSubmit>
+        function submitIframe_${id}(btn,modal){
+        var submitFunc = frame_${id}.contentWindow['onSubmit'];
+        var hideFlag = true;
+        if (submitFunc){
+        hideFlag = submitFunc();
+        }
+        console.log(modal);
+        hideFlag && modal.modal('hide');
+        }
+        </#if>
+    </@modal>
 </#macro>
 
 <#macro _menus menuBeans>
@@ -179,7 +243,126 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 <script>
     $(".btnSearch").click(function () {
         var current = location.href;
-        location.href = current.substring(0, current.indexOf("?"))+"?keyword="+$('#${id}').find('input[name=keyword]').val();
+        location.href = current.substring(0, current.indexOf("?")) + "?keyword=" + $('#${id}').find('input[name=keyword]').val();
     })
+</script>
+</#macro>
+
+<#--https://blog.csdn.net/u012526194/article/details/69937741-->
+<#--https://github.com/kartik-v/bootstrap-fileinput/wiki/09.-%E5%8F%82%E6%95%B0-->
+<#macro fileupload cssSelector uploadUrl downloadUrl="" previewUrl="" initialPreviewConfig=[] preferIconicPreview=true idKey="id" hiddenFidsField="fids" deleteUrl="" onUploaded="" onCleared="" onError="" onlyImage=false fileExts=[] imageWidth=80 maxFileCount=1 showRemove=true showPreview=true dropZoneEnabled=false browseClass="btn btn-primary">
+    <@slyak.js url=[
+    '/webjars/bootstrap-fileinput/js/plugins/piexif.min.js',
+    '/webjars/bootstrap-fileinput/js/plugins/sortable.min.js',
+    '/webjars/bootstrap-fileinput/js/plugins/purify.min.js',
+    '/webjars/bootstrap-fileinput/js/fileinput.min.js',
+    '/webjars/bootstrap-fileinput/themes/fa/theme.min.js',
+    '/webjars/bootstrap-fileinput/js/locales/zh.js'
+    ] />
+    <@slyak.css url=[
+    '/webjars/bootstrap-fileinput/css/fileinput.min.css',
+    '/webjars/slyak-web-bootstrap/fileinput.css'
+    ]/>
+<script>
+    $(function () {
+    <#--$("${cssSelector}").after("<input type='hidden' name='${hiddenFidsField}'/>");-->
+        <#assign initialPreview>
+            <#if initialPreviewConfig?size gt 0>
+                <#assign previewUrls=[]/>
+                <#list initialPreviewConfig as cfg>
+                    <#assign previewUrls = previewUrls + [previewUrl+cfg.key]/>
+                </#list>
+                <@slyak.json object=previewUrls/>
+            <#else >
+                <@slyak.json object=[]/>
+            </#if>
+        </#assign>
+
+        $("${cssSelector}").fileinput({
+            language: 'zh',
+            theme: 'fa',
+            uploadUrl: '<@slyak.query url=uploadUrl/>',
+            <#if fileExts?size gt 0>
+                allowedFileExtensions: <@slyak.json object=fileExts/>,
+            </#if>
+            uploadAsync: true,
+            showUpload: true,
+            showRemove: ${showRemove?string},
+            showPreview: ${showPreview?string},
+            showClose: false,
+            showCaption: true,
+            browseClass: '${browseClass}',
+            dropZoneEnabled: ${dropZoneEnabled?string},
+            maxFileCount: ${maxFileCount},
+            msgFilesTooMany: '选择上传的文件数量({n}) 超过允许的最大数值{m}！',
+            deleteUrl: '<@slyak.query url=deleteUrl/>?${idKey}={key}',
+            initialPreview: ${initialPreview},
+            initialPreviewAsData: true, // defaults markup
+            initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+            <#if initialPreviewConfig?size gt 0>
+                //eg: [{caption: "Business-1.jpg", size: 762980, key: 11},...]
+                initialPreviewConfig: <@slyak.json object=initialPreviewConfig/>,
+            </#if>
+            preferIconicPreview: true, // this will force thumbnails to display icons for following file extensions
+            previewFileIconSettings: { // configure your icon file extensions
+                'doc': '<i class="fa fa-file-word text-primary"></i>',
+                'xls': '<i class="fa fa-file-excel text-success"></i>',
+                'ppt': '<i class="fa fa-file-powerpoint text-danger"></i>',
+                'pdf': '<i class="fa fa-file-pdf text-danger"></i>',
+                'zip': '<i class="fa fa-file-archive text-muted"></i>',
+                'htm': '<i class="fa fa-file-code text-info"></i>',
+                'txt': '<i class="fa fa-file-text text-info"></i>',
+                'mov': '<i class="fa fa-file-movie text-warning"></i>',
+                'mp3': '<i class="fa fa-file-audio text-warning"></i>',
+                // note for these file types below no extension determination logic
+                // has been configured (the keys itself will be used as extensions)
+                'jpg': '<i class="fa fa-file-image text-danger"></i>',
+                'gif': '<i class="fa fa-file-image text-muted"></i>',
+                'png': '<i class="fa fa-file-image text-primary"></i>'
+            },
+            previewFileExtSettings: { // configure the logic for determining icon file extensions
+                'doc': function (ext) {
+                    return ext.match(/(doc|docx)$/i);
+                },
+                'xls': function (ext) {
+                    return ext.match(/(xls|xlsx)$/i);
+                },
+                'ppt': function (ext) {
+                    return ext.match(/(ppt|pptx)$/i);
+                },
+                'zip': function (ext) {
+                    return ext.match(/(zip|rar|tar|gzip|gz|7z)$/i);
+                },
+                'htm': function (ext) {
+                    return ext.match(/(htm|html)$/i);
+                },
+                'txt': function (ext) {
+                    return ext.match(/(txt|ini|csv|java|php|js|css)$/i);
+                },
+                'mov': function (ext) {
+                    return ext.match(/(avi|mpg|mkv|mov|mp4|3gp|webm|wmv)$/i);
+                },
+                'mp3': function (ext) {
+                    return ext.match(/(mp3|wav)$/i);
+                }
+            },
+            layoutTemplates: { // 预览图片按钮控制，这里屏蔽预览按钮
+                actionZoom: ''
+            }
+        }).on("fileuploaded", function (event, data, previewId, index) {
+            <#if onUploaded?has_content>
+                ${onUploaded}(data);
+            </#if>
+        }).on("filecleared", function (event, data, msg) {
+            console.log(event);
+            <#if onCleared?has_content>
+                ${onCleared}(data);
+            </#if>
+        }).on("fileerror", function (event, data, msg) {
+            <#if onError?has_content>
+                ${onError}(data);
+            </#if>
+        });
+    });
 </script>
 </#macro>

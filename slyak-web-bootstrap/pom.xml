@@ -24,6 +24,22 @@
             <artifactId>bootstrap</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.webjars.bower/bootstrap-fileinput -->
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>bootstrap-fileinput</artifactId>
+            <version>4.4.8</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jquery</artifactId>
+                    <groupId>org.webjars.bower</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bootstrap</artifactId>
+                    <groupId>org.webjars.bower</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>

@@ -1,0 +1,11 @@
+/*for bootstrap fileinput*/
+.kv-preview-data, .file-preview-other {
+    padding-top: 40px !important;
+}
+
+.file-preview-thumbnails {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}

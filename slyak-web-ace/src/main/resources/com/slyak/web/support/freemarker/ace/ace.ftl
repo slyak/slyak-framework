@@ -17,8 +17,8 @@
             copyWithEmptySelection: true
         });
         editor.setAutoScrollEditorIntoView(true);
-        editor.setOption("maxLines", ${20});
-        editor.setOption("minLines", ${20});
+        editor.setOption("maxLines", ${maxLines});
+        editor.setOption("minLines", ${minLines});
         <#nested />
     }());
 </script>

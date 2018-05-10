@@ -1,6 +1,7 @@
 package com.slyak.web.ui;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -27,11 +28,20 @@ public class Menu implements Serializable {
             }
             return false;
         } else {
-            return requestUri.startsWith(url.replaceFirst("(.*)(\\?.*)","$1"));
+            String[] path = StringUtils.split(requestUri.replaceFirst("(.*)(\\?.*)", "$1"), '/');
+            if (path == null || path.length == 0) {
+                return false;
+            }
+            return url.startsWith("/" + path[0]);
         }
     }
 
     public boolean hasChildren() {
         return !CollectionUtils.isEmpty(children);
+    }
+
+    public static void main(String[] args) {
+        String[] split = StringUtils.split("/project/test", '/');
+        System.out.println(split[0]);
     }
 }
