@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * .
@@ -19,4 +20,5 @@ public class Fileinput implements Serializable{
     String key;
     String caption;
     long size;
+    Map<String,String> extra;
 }

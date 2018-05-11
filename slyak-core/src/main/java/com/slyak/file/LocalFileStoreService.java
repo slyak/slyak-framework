@@ -1,6 +1,5 @@
 package com.slyak.file;
 
-import com.google.common.hash.Hashing;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
@@ -19,10 +18,10 @@ import java.io.InputStream;
  * @author stormning 2018/5/8
  * @since 1.3.0
  */
-public class LocalFileStoreService implements FileStoreService {
+public class LocalFileStoreService implements FileStoreService<String> {
 
     @Setter
-    private IdFileStrategy idPathStrategy = new DefaultIdFileStrategy();
+    private IdFileStrategy<String> idPathStrategy = new DefaultIdFileStrategy();
 
     @Setter
     private String pathPrefix = "file:~/filestore";
@@ -46,7 +45,7 @@ public class LocalFileStoreService implements FileStoreService {
         FileUtils.forceDelete(idPathStrategy.getFile(id));
     }
 
-    public class DefaultIdFileStrategy implements IdFileStrategy {
+    public class DefaultIdFileStrategy implements IdFileStrategy<String> {
         private char separatorChar = '-';
 
         @Override

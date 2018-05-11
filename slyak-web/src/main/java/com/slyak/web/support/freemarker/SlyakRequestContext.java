@@ -45,9 +45,13 @@ public class SlyakRequestContext extends RequestContext {
         if (StringUtils.isEmpty(url)) {
             return replaceCurrentQuery(params);
         } else {
-            //placeholder
-            //foo/{bar}?spam={spam}
-            return getContextUrl(url, params);
+            if (url.contains("{")) {
+                //placeholder
+                //foo/{bar}?spam={spam}
+                return getContextUrl(url, params);
+            } else {
+                return replaceQuery(url, params);
+            }
         }
     }
 
@@ -155,7 +159,7 @@ public class SlyakRequestContext extends RequestContext {
         return RandomStringUtils.randomAlphanumeric(count);
     }
 
-    public String json(Object o){
+    public String json(Object o) {
         return JSON.toJSONString(o);
     }
 

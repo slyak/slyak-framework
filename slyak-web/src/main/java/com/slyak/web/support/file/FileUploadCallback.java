@@ -12,10 +12,10 @@ import java.util.List;
  * @author stormning 2018/5/8
  * @since 1.3.0
  */
-public interface FileUploadCallback<T, R> {
+public interface FileUploadCallback<T, R, ID extends Serializable> {
     T saveMFile(MultipartFile mfile);
 
-    boolean deleteFile(Serializable fileId);
+    boolean deleteFile(ID fileId);
 
     ResponseEntity<R> createResponseEntity(List<T> savedFiles);
 }

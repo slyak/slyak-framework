@@ -47,11 +47,15 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
        value="${value}" name="${name}" placeholder="${placeholder}"/>
 </#macro>
 
-<#macro a href title modal=false showSubmit=false attributes...>
+<#macro a href title modalContent="" modal=(modalContent?has_content || false) showSubmit=false  attributes...>
     <#assign modalId>modal_<@slyak.randomAlphanumeric/></#assign>
     <#assign _attrs = attributes/>
     <#if modal>
-        <@modalIframe id=modalId title=title url=href showSubmit=showSubmit/>
+        <#if modalContent?has_content>
+            <@smartModal id=modalId title=title content=modalContent/>
+            <#else >
+            <@modalIframe id=modalId title=title url=href showSubmit=showSubmit/>
+        </#if>
         <#assign _attrs=_attrs+{'data-toggle':'modal','data-target':'#${modalId}'}/>
     </#if>
 <a href="<@slyak.query url=href/>"<@slyak.attributes values=_attrs/>>${title}</a>
@@ -103,7 +107,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </div>
 </#macro>
 
-<#macro modal id title content="加载中..." class="modal-lg" onShown='' onSubmit=''>
+<#macro smartModal id title content="加载中..." class="modal-lg" onShown='' onSubmit=''>
 <div class="modal" tabindex="-1" role="dialog" id="${id}">
     <div class="modal-dialog ${class}" role="document">
         <div class="modal-content">
@@ -155,7 +159,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 
 <#macro modalIframe id title url='' class="modal-lg" showSubmit=false>
     <#assign onSubmit=showSubmit?string("submitIframe_${id}","")/>
-    <@modal id=id title=title class=class onSubmit="${onSubmit}" onShown="createIframe_${id}">
+    <@smartModal id=id title=title class=class onSubmit="${onSubmit}" onShown="createIframe_${id}">
     var frame_${id};
     function createIframe_${id}(btn,modal){
     frame_${id} = <@slyakUI.iframe src='${url}'/>;
@@ -172,7 +176,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         hideFlag && modal.modal('hide');
         }
         </#if>
-    </@modal>
+    </@smartModal>
 </#macro>
 
 <#macro _menus menuBeans>
@@ -250,7 +254,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 
 <#--https://blog.csdn.net/u012526194/article/details/69937741-->
 <#--https://github.com/kartik-v/bootstrap-fileinput/wiki/09.-%E5%8F%82%E6%95%B0-->
-<#macro fileupload cssSelector uploadUrl downloadUrl="" previewUrl="" initialPreviewConfig=[] preferIconicPreview=true idKey="id" hiddenFidsField="fids" deleteUrl="" onUploaded="" onCleared="" onError="" onlyImage=false fileExts=[] imageWidth=80 maxFileCount=1 showRemove=true showPreview=true dropZoneEnabled=false browseClass="btn btn-primary">
+<#macro fileupload cssSelector uploadUrl downloadUrl="" editable=true initialPreviewConfig=[] preferIconicPreview=true hiddenFidsField="fids" deleteUrl="" onUploaded="" onCleared="" onError="" onlyImage=false fileExts=[] imageWidth=80 maxFileCount=1 showRemove=true showPreview=true dropZoneEnabled=false browseClass="btn btn-primary">
     <@slyak.js url=[
     '/webjars/bootstrap-fileinput/js/plugins/piexif.min.js',
     '/webjars/bootstrap-fileinput/js/plugins/sortable.min.js',
@@ -270,7 +274,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
             <#if initialPreviewConfig?size gt 0>
                 <#assign previewUrls=[]/>
                 <#list initialPreviewConfig as cfg>
-                    <#assign previewUrls = previewUrls + [previewUrl+cfg.key]/>
+                    <#assign previewUrls = previewUrls + [downloadUrl+cfg.key]/>
                 </#list>
                 <@slyak.json object=previewUrls/>
             <#else >
@@ -286,8 +290,9 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 allowedFileExtensions: <@slyak.json object=fileExts/>,
             </#if>
             uploadAsync: true,
-            showUpload: true,
-            showRemove: ${showRemove?string},
+            showUpload: ${editable?string},
+            showBrowse: ${editable?string},
+            showRemove: ${(editable && showRemove)?string},
             showPreview: ${showPreview?string},
             showClose: false,
             showCaption: true,
@@ -295,7 +300,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
             dropZoneEnabled: ${dropZoneEnabled?string},
             maxFileCount: ${maxFileCount},
             msgFilesTooMany: '选择上传的文件数量({n}) 超过允许的最大数值{m}！',
-            deleteUrl: '<@slyak.query url=deleteUrl/>?${idKey}={key}',
+            deleteUrl: '<@slyak.query url=deleteUrl/>',
             initialPreview: ${initialPreview},
             initialPreviewAsData: true, // defaults markup
             initialPreviewFileType: 'image', // image is the default and can be overridden in config below

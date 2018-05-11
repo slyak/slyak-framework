@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
@@ -19,11 +20,11 @@ import java.util.List;
  * @author stormning 2018/5/8
  * @since 1.3.0
  */
-public abstract class FileController<T, R> {
+public abstract class FileController<T, R, ID extends Serializable> {
 
-    private final FileUploadCallback<T, R> callback;
+    private final FileUploadCallback<T, R, ID> callback;
 
-    public FileController(FileUploadCallback<T, R> callback) {
+    public FileController(FileUploadCallback<T, R, ID> callback) {
         this.callback = callback;
     }
 
@@ -42,9 +43,10 @@ public abstract class FileController<T, R> {
     }
 
     @RequestMapping("/delete")
-    public boolean handleFileDelete(Serializable fileId) {
+    @ResponseBody
+    public boolean handleFileDelete(ID id) {
         try {
-            callback.deleteFile(fileId);
+            callback.deleteFile(id);
             return true;
         } catch (Exception e) {
             return false;
