@@ -53,7 +53,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     <#if modal>
         <#if modalContent?has_content>
             <@smartModal id=modalId title=title content=modalContent/>
-            <#else >
+        <#else >
             <@modalIframe id=modalId title=title url=href showSubmit=showSubmit/>
         </#if>
         <#assign _attrs=_attrs+{'data-toggle':'modal','data-target':'#${modalId}'}/>
@@ -171,9 +171,14 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         var hideFlag = true;
         if (submitFunc){
         hideFlag = submitFunc();
+        if (hideFlag){
+        var frameForm = $(frame_${id}.contentWindow.document.getElementsByTagName("form")[0]);
+        if (frameForm){
+        $.post(frameForm.attr("action"), frameForm.serialize());
         }
-        console.log(modal);
-        hideFlag && modal.modal('hide');
+        }
+        }
+        hideFlag && modal.modal('hide') && parent.location.reload();
         }
         </#if>
     </@smartModal>
@@ -290,7 +295,6 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 allowedFileExtensions: <@slyak.json object=fileExts/>,
             </#if>
             uploadAsync: true,
-            showUpload: ${editable?string},
             showBrowse: ${editable?string},
             showRemove: ${(editable && showRemove)?string},
             showPreview: ${showPreview?string},
@@ -352,6 +356,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 }
             },
             layoutTemplates: { // 预览图片按钮控制，这里屏蔽预览按钮
+                    <#if !editable>actionDelete: '',</#if>
                 actionZoom: ''
             }
         }).on("fileuploaded", function (event, data, previewId, index) {
@@ -359,7 +364,6 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 ${onUploaded}(data);
             </#if>
         }).on("filecleared", function (event, data, msg) {
-            console.log(event);
             <#if onCleared?has_content>
                 ${onCleared}(data);
             </#if>

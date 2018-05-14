@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.slyak.web.support.freemarker.FreemarkerConfig
+com.slyak.web.support.freemarker.FreemarkerConfig,\
+com.slyak.web.support.data.RequestParamBindConfiguration

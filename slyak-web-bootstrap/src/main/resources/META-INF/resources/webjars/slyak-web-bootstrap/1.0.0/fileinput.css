@@ -1,5 +1,5 @@
 /*for bootstrap fileinput*/
-.kv-preview-data, .file-preview-other {
+.kv-file-content {
     padding-top: 40px !important;
 }
 
@@ -8,4 +8,8 @@
     align-items: flex-start;
     justify-content: flex-start;
     flex-wrap: wrap;
+}
+
+.no-browse{
+    display: none;
 }
