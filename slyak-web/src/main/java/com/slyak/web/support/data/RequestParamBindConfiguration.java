@@ -22,7 +22,7 @@ public class RequestParamBindConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public RequestParamBindArgumentResolver bindArgumentResolver(){
+    public RequestParamBindArgumentResolver bindArgumentResolver() {
         return new RequestParamBindArgumentResolver();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.util.Assert;
+import org.springframework.util.SerializationUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
@@ -21,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
@@ -79,11 +79,19 @@ public class RequestParamBindArgumentResolver implements HandlerMethodArgumentRe
             }
 
             if (arg != null) {
-                WebRequestDataBinder dataBinder = new WebRequestDataBinder(arg);
-                dataBinder.bind(webRequest);
+                //bind again
+                //this action will directly modify entity loadedState , it will cause loadedState equals currentState, so update will have no effect
+                //to avoid this, need a copy of complex property (simple property will has no problem), add bind param to it
+                arg = deepCopy(arg);
+                String name = Conventions.getVariableNameForParameter(parameter);
+                bindToTarget(parameter, mavContainer, webRequest, binderFactory, name, arg);
             }
         }
         return arg;
+    }
+
+    private Object deepCopy(Object arg) {
+        return SerializationUtils.deserialize(SerializationUtils.serialize(arg));
     }
 
     private String paramName(RequestParamBind ann) {
@@ -103,6 +111,10 @@ public class RequestParamBindArgumentResolver implements HandlerMethodArgumentRe
         Object attribute = (mavContainer.containsAttribute(name) ? mavContainer.getModel().get(name) :
                 createAttribute(name, parameter, binderFactory, webRequest));
 
+        return bindToTarget(parameter, mavContainer, webRequest, binderFactory, name, attribute);
+    }
+
+    private Object bindToTarget(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory, String name, Object attribute) throws Exception {
         WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
         if (binder.getTarget() != null) {
             if (!mavContainer.isBindingDisabled(name)) {
@@ -194,5 +206,10 @@ public class RequestParamBindArgumentResolver implements HandlerMethodArgumentRe
         Map<String, String> variables = (Map<String, String>) request.getAttribute(
                 HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         return (variables != null ? variables : Collections.<String, String>emptyMap());
+    }
+
+    public static void main(String[] args) {
+        Long a = 1L;
+        System.out.println(a.getClass().isPrimitive());
     }
 }

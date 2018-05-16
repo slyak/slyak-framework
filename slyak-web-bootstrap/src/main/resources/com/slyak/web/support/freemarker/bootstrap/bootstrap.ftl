@@ -61,36 +61,39 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 <a href="<@slyak.query url=href/>"<@slyak.attributes values=_attrs/>>${title}</a>
 </#macro>
 
-<#macro radios name value='' data=[{'title':'test','value':'test'}]>
+<#macro radios name value='' data=[{'title':'test','value':'test'}] class="">
     <#list data as d>
         <#assign idTmp>radio_<@slyak.randomAlphanumeric/></#assign>
     <div class="custom-control custom-radio custom-control-inline">
         <input type="radio" id="${idTmp}" name="${name}"
-               class="custom-control-input"<#if (!(value?has_content) && d_index==0) || value==d.value> checked</#if>>
+               class="custom-control-input ${class}"<#if (!(value?has_content) && d_index==0) || value==d.value> checked</#if>>
         <label class="custom-control-label" for="${idTmp}">${d.title}</label>
     </div>
     </#list>
 </#macro>
 
-<#macro checkboxes name values=[] data=[{'title':'test','value':'test'}]>
+<#macro checkboxes name values=[] data=[{'title':'test','value':'test'}] class="">
     <#list data as d>
         <#assign idTmp>checkbox_<@slyak.randomAlphanumeric/></#assign>
     <div class="custom-control custom-checkbox custom-control-inline">
         <input type="checkbox" id="${idTmp}" name="${name}"
-               class="custom-control-input"<#if values?seq_contains(d.value)> checked</#if>>
+               class="custom-control-input ${class}"<#if values?seq_contains(d.value)> checked</#if>>
         <label class="custom-control-label" for="${idTmp}">${d.title}</label>
     </div>
     </#list>
 </#macro>
 
-<#macro textarea name editable=true rows=5 class="">
+<#macro textarea name editable=true rows=5 class="" attributes...>
 <textarea
         class="form-control${editable?string('','-plaintext')} ${class}"${editable?string(' ',' readonly')}
-        name="${name}" rows="${rows}"><#nested /></textarea>
+        name="${name}" rows="${rows}"<@slyak.attributes values=attributes/>><#nested /></textarea>
 </#macro>
 
-<#macro select name editable=true options=[{'title':'test','value':'test'}] value="" attributes...>
-<select class="custom-select"<@slyak.attributes values=attributes/>>
+<#macro select name editable=true options=[{'title':'test','value':'test'}] value="" mention="" class="" attributes...>
+<select class="custom-select ${class}"<@slyak.attributes values=attributes/> name="${name}">
+    <#if mention?has_content>
+        <option>${mention}</option>
+    </#if>
     <#list options as opt>
         <option<#if value==opt.value> selected</#if> value="${opt.value}">${opt.title}</option>
     </#list>
@@ -162,25 +165,28 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
     <@smartModal id=id title=title class=class onSubmit="${onSubmit}" onShown="createIframe_${id}">
     var frame_${id};
     function createIframe_${id}(btn,modal){
-    frame_${id} = <@slyakUI.iframe src='${url}'/>;
-    return frame_${id};
+        frame_${id} = <@slyakUI.iframe src='${url}'/>;
+        return frame_${id};
     }
-        <#if showSubmit>
-        function submitIframe_${id}(btn,modal){
+    <#if showSubmit>
+    function submitIframe_${id}(btn,modal){
         var submitFunc = frame_${id}.contentWindow['onSubmit'];
         var hideFlag = true;
         if (submitFunc){
-        hideFlag = submitFunc();
+            hideFlag = submitFunc();
+        }
         if (hideFlag){
-        var frameForm = $(frame_${id}.contentWindow.document.getElementsByTagName("form")[0]);
-        if (frameForm){
-        $.post(frameForm.attr("action"), frameForm.serialize());
+            var frameForm = $(frame_${id}.contentWindow.document.getElementsByTagName("form")[0]);
+            if (frameForm){
+                $.post(frameForm.attr("action"), frameForm.serialize(), function(){
+                    parent.location.reload();
+                });
+            } else {
+                setTimeout(function(){parent.location.reload()},500);
+            }
         }
-        }
-        }
-        hideFlag && modal.modal('hide') && parent.location.reload();
-        }
-        </#if>
+    }
+    </#if>
     </@smartModal>
 </#macro>
 

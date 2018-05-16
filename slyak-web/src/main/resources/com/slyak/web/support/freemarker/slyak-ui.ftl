@@ -1,8 +1,43 @@
 <#ftl strip_whitespace=true>
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#--attributes for dom-->
-<#macro a href attributes...><a
-        href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
+<#macro handlebars>
+    <@slyak.js url=["/webjars/handlebars/handlebars.min.js"]/>
+<script>
+    Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+        switch (operator) {
+            case '==':
+                return (v1 == v2) ? options.fn(this) : options.inverse(this);
+            case '===':
+                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+            case '!=':
+                return (v1 != v2) ? options.fn(this) : options.inverse(this);
+            case '!==':
+                return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+            case '<':
+                return (v1 < v2) ? options.fn(this) : options.inverse(this);
+            case '<=':
+                return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+            case '>':
+                return (v1 > v2) ? options.fn(this) : options.inverse(this);
+            case '>=':
+                return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+            case '&&':
+                return (v1 && v2) ? options.fn(this) : options.inverse(this);
+            case '||':
+                return (v1 || v2) ? options.fn(this) : options.inverse(this);
+            default:
+                return options.inverse(this);
+        }
+    });
+</script>
+
+</#macro>
+<#macro fontasome>
+    <@slyak.css url="/webjars/font-awesome/web-fonts-with-css/css/fontawesome-all.css"/>
+</#macro>
+
+<#macro a href attributes...><a href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
 <#macro form action method="POST" enctype="application/x-www-form-urlencoded" attributes...>
 <form action="<@slyak.query url=action/>" method="${method}" autocomplete="off"
       enctype="${enctype}"<@slyak.attributes values=attributes/>>
