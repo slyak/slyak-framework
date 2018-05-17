@@ -1,16 +1,13 @@
 package com.slyak.core.util;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
+import ch.ethz.ssh2.*;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.Assert;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * .
@@ -29,11 +26,18 @@ public class SSH2 {
 
     private boolean authSuccess = false;
 
+    private String mode = "0750";
+
     private SSH2() {
     }
 
     public SSH2(Connection conn) {
         this.conn = conn;
+    }
+
+    public SSH2 mode(String mode) {
+        this.mode = mode;
+        return this;
     }
 
     @SneakyThrows
@@ -47,6 +51,53 @@ public class SSH2 {
         return authSuccess;
     }
 
+    public SSH2 mkdir(String dir) {
+        return execCommand("test -d " + dir + " || mkdir -p " + dir, SimpleStdCallback.INSTANCE);
+    }
+
+    @SneakyThrows
+    public void scp(File file, String newFileName, String remoteTarget) {
+        String fileName = newFileName == null ? FilenameUtils.getName(file.getPath()) : newFileName;
+        @Cleanup FileInputStream is = new FileInputStream(file);
+        scp(is, fileName, remoteTarget);
+    }
+
+    @SneakyThrows
+    public void scp(String fileFullPath, String newFileName, String remoteTarget) {
+        scp(new File(fileFullPath), newFileName, remoteTarget);
+    }
+
+
+    @SneakyThrows
+    public void scp(InputStream is, String newFileName, String remoteDirectory) {
+        Assert.notNull(newFileName, "file name must be set");
+        mkdir(remoteDirectory);
+        @Cleanup SCPOutputStream out = scpClient().put(newFileName, is.available(), remoteDirectory, mode);
+        IOUtils.copy(is, out);
+        out.flush();
+    }
+
+    public void scpDirectory(String local, String remote) {
+        File dir = new File(local);
+        if (!dir.isDirectory()) {
+            return;
+        }
+        String[] files = dir.list();
+        if (files != null) {
+            for (String file : files) {
+                String fullName = local + File.separator + file;
+                if (new File(fullName).isDirectory()) {
+                    String rdir = remote + File.separator + file;
+                    mkdir(remote + File.separator + file);
+                    scpDirectory(fullName, rdir);
+                } else {
+                    scp(fullName, null, remote);
+                }
+            }
+        }
+    }
+
+
     public SSH2 execCommand(String command, StdCallback callback) {
         Session session = null;
         try {
@@ -54,8 +105,8 @@ public class SSH2 {
             @Cleanup InputStream stderr = new StreamGobbler(session.getStderr());
             @Cleanup InputStream stdout = new StreamGobbler(session.getStdout());
             session.execCommand(command);
-            BufferedReader brerr = new BufferedReader(new InputStreamReader(stderr));
-            BufferedReader brout = new BufferedReader(new InputStreamReader(stdout));
+            @Cleanup BufferedReader brerr = new BufferedReader(new InputStreamReader(stderr));
+            @Cleanup BufferedReader brout = new BufferedReader(new InputStreamReader(stdout));
             while (true) {
                 String out = brout.readLine();
                 String error = null;
@@ -82,7 +133,7 @@ public class SSH2 {
         return this;
     }
 
-    public SCPClient scpClient() {
+    private SCPClient scpClient() {
         if (scpClient == null) {
             scpClient = new SCPClient(conn);
         }
@@ -98,5 +149,13 @@ public class SSH2 {
         Connection conn = new Connection(hostname, port);
         conn.connect();
         return new SSH2(conn);
+    }
+
+    public static void main(String[] args) throws IOException {
+        SSH2 ssh2 = SSH2.connect("192.168.230.8", 22).auth("root", "123456");
+        for (int i = 0; i < 10; i++) {
+            ssh2.scp("/Users/stormning/Downloads/test.txt", "test" + i + ".txt", "/juesttest");
+            System.out.println("scp " + i);
+        }
     }
 }
