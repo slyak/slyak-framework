@@ -1,14 +1,5 @@
 <#ftl strip_whitespace=true>
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
-
-<#--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/piexif.min.js" type="text/javascript"></script>
-<!-- sortable.min.js is only needed if you wish to sort / rearrange files in initial preview.
-    This must be loaded before fileinput.min.js &ndash;&gt;
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/sortable.min.js" type="text/javascript"></script>
-<!-- purify.min.js is only needed if you wish to purify HTML content in your preview for
-    HTML files. This must be loaded before fileinput.min.js &ndash;&gt;
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.4.5/js/plugins/purify.min.js" type="text/javascript"></script>-->
-
 <#macro cssAndJs>
     <@slyak.js url=[
     '/webjars/jquery/jquery.min.js',
@@ -47,14 +38,14 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
        value="${value}" name="${name}" placeholder="${placeholder}"/>
 </#macro>
 
-<#macro a href title modalContent="" modal=(modalContent?has_content || false) showSubmit=false  attributes...>
+<#macro a href title modalContent="" modal=(modalContent?has_content || false) showSubmit=false onSubmit="" attributes...>
     <#assign modalId>modal_<@slyak.randomAlphanumeric/></#assign>
     <#assign _attrs = attributes/>
     <#if modal>
         <#if modalContent?has_content>
             <@smartModal id=modalId title=title content=modalContent/>
         <#else >
-            <@modalIframe id=modalId title=title url=href showSubmit=showSubmit/>
+            <@modalIframe id=modalId title=title url=href showSubmit=showSubmit onSubmit=onSubmit/>
         </#if>
         <#assign _attrs=_attrs+{'data-toggle':'modal','data-target':'#${modalId}'}/>
     </#if>
@@ -121,7 +112,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
                 </button>
             </div>
             <div class="modal-body">
-                <p>${content}</p>
+                ${content}
             </div>
             <div class="modal-footer">
                 <#if onSubmit?has_content>
@@ -139,7 +130,7 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         <#if onShown?has_content>
         modal${id}.on('shown.bs.modal', function (event) {
             var ret = ${onShown}($(this), modal${id});
-            modal${id}.find(".modal-body > p").empty().append(ret);
+            modal${id}.find(".modal-body").empty().append(ret);
         });
         </#if>
     modal${id}.find(".btn-primary").on("click", function (event) {
@@ -160,9 +151,9 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
 </script>
 </#macro>
 
-<#macro modalIframe id title url='' class="modal-lg" showSubmit=false>
-    <#assign onSubmit=showSubmit?string("submitIframe_${id}","")/>
-    <@smartModal id=id title=title class=class onSubmit="${onSubmit}" onShown="createIframe_${id}">
+<#macro modalIframe id title url='' class="modal-lg" showSubmit=false onSubmit="">
+    <#assign submitInner=showSubmit?string("submitIframe_${id}","")/>
+    <@smartModal id=id title=title class=class onSubmit="${submitInner}" onShown="createIframe_${id}">
     var frame_${id};
     function createIframe_${id}(btn,modal){
         frame_${id} = <@slyakUI.iframe src='${url}'/>;
@@ -178,8 +169,12 @@ inputgroup jumbotron listgroup modal navs navbar popovers progress scrollspy too
         if (hideFlag){
             var frameForm = $(frame_${id}.contentWindow.document.getElementsByTagName("form")[0]);
             if (frameForm){
-                $.post(frameForm.attr("action"), frameForm.serialize(), function(){
-                    parent.location.reload();
+                $.post(frameForm.attr("action"), frameForm.serialize(), function(ret){
+                    <#if onSubmit?has_content>
+                        parent["${onSubmit}"](ret) && modal.modal("hide");
+                        <#else >
+                        parent.location.reload();
+                    </#if>
                 });
             } else {
                 setTimeout(function(){parent.location.reload()},500);

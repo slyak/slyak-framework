@@ -8,12 +8,13 @@
     ]/>
 </#macro>
 
-<#macro init cssSelector mode="javascript" theme="monokai" minLines=20 maxLines=20>
+<#macro init cssSelector mode="javascript" theme="monokai" minLines=20 maxLines=20 editable=true>
     <#assign editorId>editor_<@slyak.randomAlphanumeric/></#assign>
 <script>
     (function () {
         var realEditor = $("${cssSelector}");
-        realEditor.after("<div id='${editorId}'/>");
+        var fakeEditor = $("<div id='${editorId}'/>");
+        realEditor.after(fakeEditor);
         realEditor.hide();
         var editor = ace.edit("${editorId}");
         editor.setTheme("ace/theme/${theme}");
@@ -30,9 +31,19 @@
         editor.setOption("minLines", ${minLines});
         //setup real editor and fake editor value
         editor.getSession().setValue(realEditor.val());
+        <#if !editable>editor.setReadOnly(true);</#if>
+        function gotoLastLine() {
+            var session = editor.getSession();
+            var count = session.getLength();
+            editor.gotoLine(count, session.getLine(count - 1).length);
+        }
+
         editor.getSession().on("change", function () {
             realEditor.val(editor.getSession().getValue());
+            <#if !editable>gotoLastLine();</#if>
         });
+
+        gotoLastLine();
         <#nested />
     }());
 </script>

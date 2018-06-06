@@ -1,6 +1,8 @@
-package com.slyak.core.util;
+package com.slyak.core.ssh2;
 
-import ch.ethz.ssh2.*;
+import com.slyak.core.util.IOUtils;
+import com.slyak.core.util.StringUtils;
+import com.trilead.ssh2.*;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,16 @@ public class SSH2 {
 
     @SneakyThrows
     public SSH2 auth(String user, String password) {
-        this.authSuccess = conn.authenticateWithPassword(user, password);
+        return setAuthSuccess(conn.authenticateWithPassword(user, password));
+    }
+
+    @SneakyThrows
+    public SSH2 authWithPublicKey(String user, String password, char[] pemPrivateKey) {
+        return setAuthSuccess(conn.authenticateWithPublicKey(user, pemPrivateKey, password));
+    }
+
+    private SSH2 setAuthSuccess(boolean authSuccess) {
+        this.authSuccess = authSuccess;
         log.info("Authentication result : {}", authSuccess);
         return this;
     }
@@ -55,27 +66,66 @@ public class SSH2 {
         return execCommand("test -d " + dir + " || mkdir -p " + dir, SimpleStdCallback.INSTANCE);
     }
 
-    @SneakyThrows
     public void scp(File file, String newFileName, String remoteTarget) {
-        String fileName = newFileName == null ? FilenameUtils.getName(file.getPath()) : newFileName;
-        @Cleanup FileInputStream is = new FileInputStream(file);
-        scp(is, fileName, remoteTarget);
+        scp(file, newFileName, remoteTarget, true);
     }
 
     @SneakyThrows
+    public void scp(File file, String newFileName, String remoteTarget, boolean overwrite) {
+        String fileName = newFileName == null ? FilenameUtils.getName(file.getPath()) : newFileName;
+        @Cleanup FileInputStream is = new FileInputStream(file);
+        scp(is, fileName, remoteTarget, overwrite);
+    }
+
     public void scp(String fileFullPath, String newFileName, String remoteTarget) {
-        scp(new File(fileFullPath), newFileName, remoteTarget);
+        scp(new File(fileFullPath), newFileName, remoteTarget, true);
+    }
+
+    @SneakyThrows
+    public void scp(String fileFullPath, String newFileName, String remoteTarget, boolean overwrite) {
+        scp(new File(fileFullPath), newFileName, remoteTarget, overwrite);
     }
 
 
     @SneakyThrows
     public void scp(InputStream is, String newFileName, String remoteDirectory) {
+        scp(is, newFileName, remoteDirectory, true);
+    }
+
+    @SneakyThrows
+    public void scp(InputStream is, String newFileName, String remoteDirectory, boolean overwrite) {
+        if (!overwrite) {
+            String exists = execCommand("test -f " + remoteDirectory + "/" + newFileName + " && echo exists");
+            if (StringUtils.contains(exists, "exists")) {
+                return;
+            }
+        }
         Assert.notNull(newFileName, "file name must be set");
         mkdir(remoteDirectory);
-        @Cleanup SCPOutputStream out = scpClient().put(newFileName, is.available(), remoteDirectory, mode);
-        IOUtils.copy(is, out);
-        out.flush();
+
+        int available = is.available();
+        if (available > 1 /*500 * 1024 * 1024*/) {
+            //if is gt than 500M ,use sftpClient
+            SFTPv3Client sftPv3Client = sftPv3Client();
+            String path = remoteDirectory + "/" + newFileName;
+            SFTPv3FileHandle handle = sftPv3Client.createFile(path);
+            byte[] buffer = new byte[1024 * 4];
+            int i;
+            long offset = 0;
+            while ((i = is.read(buffer)) != -1) {
+                sftPv3Client.write(handle, offset, buffer, 0, i);
+                offset += i;
+            }
+            sftPv3Client.chmod(path, 750);
+            sftPv3Client.closeFile(handle);
+            if (handle.isClosed()) {
+                sftPv3Client.close();
+            }
+        } else {
+            scpClient().put(IOUtils.readFully(is, available), newFileName, remoteDirectory, mode);
+        }
     }
+
 
     public void scpDirectory(String local, String remote) {
         File dir = new File(local);
@@ -95,6 +145,32 @@ public class SSH2 {
                 }
             }
         }
+    }
+
+    public String execCommand(String command) {
+        StringBuilder builder = new StringBuilder();
+        execCommand(command, new StdCallback() {
+            boolean hasPreLine = false;
+
+            @Override
+            public void processOut(String out) {
+                if (hasPreLine) {
+                    builder.append("\n");
+                }
+                builder.append(out);
+                hasPreLine = true;
+            }
+
+            @Override
+            public void processError(String error) {
+                if (hasPreLine) {
+                    builder.append("\n");
+                }
+                builder.append(error);
+                hasPreLine = true;
+            }
+        });
+        return builder.toString();
     }
 
 
@@ -140,6 +216,11 @@ public class SSH2 {
         return scpClient;
     }
 
+    @SneakyThrows
+    private SFTPv3Client sftPv3Client() {
+        return new SFTPv3Client(conn);
+    }
+
     public void disconnect() {
         conn.close();
     }
@@ -149,13 +230,5 @@ public class SSH2 {
         Connection conn = new Connection(hostname, port);
         conn.connect();
         return new SSH2(conn);
-    }
-
-    public static void main(String[] args) throws IOException {
-        SSH2 ssh2 = SSH2.connect("192.168.230.8", 22).auth("root", "123456");
-        for (int i = 0; i < 10; i++) {
-            ssh2.scp("/Users/stormning/Downloads/test.txt", "test" + i + ".txt", "/juesttest");
-            System.out.println("scp " + i);
-        }
     }
 }

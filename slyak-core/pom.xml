@@ -31,11 +31,20 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
         </dependency>
+<!--
         <dependency>
             <groupId>ch.ethz.ganymed</groupId>
             <artifactId>ganymed-ssh2</artifactId>
             <version>262</version>
         </dependency>
+-->
+        <!-- https://mvnrepository.com/artifact/org.jenkins-ci/trilead-ssh2 -->
+        <dependency>
+            <groupId>org.jenkins-ci</groupId>
+            <artifactId>trilead-ssh2</artifactId>
+            <version>build-217-jenkins-11</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

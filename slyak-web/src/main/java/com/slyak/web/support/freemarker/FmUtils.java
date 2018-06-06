@@ -8,7 +8,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -18,6 +17,7 @@ import java.util.Map;
 
 /**
  * .
+ *
  * @author <a href="mailto:stormning@163.com">stormning</a>
  * @version V1.0, 2015/8/9.
  */
@@ -26,28 +26,8 @@ public class FmUtils {
 
     static BeansWrapper wrapper;
 
-    public static String renderTpl(String tpl, Object model) {
-        return renderTpl(getTemplate(tpl), model);
-    }
-
-    public static String renderTpl(Template template, Object model) {
-        try {
-            return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-        } catch (IOException e) {
-            LOGGER.error("Template {0} not found", template.getName());
-        } catch (TemplateException e) {
-            LOGGER.error("Render template error", e);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    public static Template getTemplate(String tpl) {
-        try {
-            return FmContext.cfg.getTemplate(tpl);
-        } catch (IOException e) {
-            LOGGER.error("Template {0} not found", tpl);
-            return null;
-        }
+    public static FreemarkerTemplateRender getTemplateRender() {
+        return FmContext.getTemplateRender();
     }
 
     @SuppressWarnings("unchecked")
@@ -188,11 +168,5 @@ public class FmUtils {
         StringWriter sw = new StringWriter(64);
         body.render(sw);
         return sw.toString();
-    }
-
-    public static void append(StringBuilder sb, String key, Object value) {
-        if (value != null) {
-            sb.append(" ").append(key).append("=\"").append(value).append("\"");
-        }
     }
 }

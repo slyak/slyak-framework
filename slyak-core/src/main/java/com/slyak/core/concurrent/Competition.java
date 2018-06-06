@@ -1,4 +1,4 @@
-package com.slyak.concurrent;
+package com.slyak.core.concurrent;
 
 /**
  * .

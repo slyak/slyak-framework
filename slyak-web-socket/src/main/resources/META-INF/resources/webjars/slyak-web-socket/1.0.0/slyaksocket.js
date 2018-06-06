@@ -2,7 +2,7 @@ var slyaksocket = function (topics) {
     var stompClient = Stomp.over(new SockJS('/websocket'));
     var connected = false;
     return {
-        connect: function () {
+        connect: function (callback) {
             stompClient.connect({}, function (frame) {
                 connected = true;
                 console.log('Connected: ' + frame);
@@ -11,12 +11,18 @@ var slyaksocket = function (topics) {
                         window[topic.callback](greeting);
                     });
                 });
+                if (callback) {
+                    callback();
+                }
             });
         },
         send: function (destination, message) {
             if (this.isConnected()) {
                 message = typeof message == 'string' ? message : JSON.stringify(message);
-                stompClient.send(destination, message);
+                //destination userNameAndPwd message
+                stompClient.send(destination, {}, message);
+            } else {
+                alert("not connected yet! pls add this to connect callback!")
             }
         },
 

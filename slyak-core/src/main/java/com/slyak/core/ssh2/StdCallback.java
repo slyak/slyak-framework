@@ -1,4 +1,4 @@
-package com.slyak.core.util;
+package com.slyak.core.ssh2;
 
 /**
  * .

@@ -1,4 +1,4 @@
-package com.slyak.converter;
+package com.slyak.core.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;

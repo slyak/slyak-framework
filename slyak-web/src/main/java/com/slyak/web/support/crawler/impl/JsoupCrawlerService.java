@@ -2,7 +2,7 @@ package com.slyak.web.support.crawler.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.slyak.concurrent.ExecutorUtils;
+import com.slyak.core.concurrent.ExecutorUtils;
 import com.slyak.support.crawler.SessionCallback;
 import com.slyak.support.crawler.impl.DefaultSessionCallback;
 import com.slyak.web.support.crawler.CrawlerService;

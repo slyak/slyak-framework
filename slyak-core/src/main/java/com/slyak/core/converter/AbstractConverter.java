@@ -1,4 +1,4 @@
-package com.slyak.converter;
+package com.slyak.core.converter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

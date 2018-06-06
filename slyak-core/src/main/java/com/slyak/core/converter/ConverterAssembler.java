@@ -14,7 +14,7 @@
  * or the registration of a utility model, design or code.
  */
 
-package com.slyak.converter;
+package com.slyak.core.converter;
 
 import java.util.Collection;
 import java.util.Map;

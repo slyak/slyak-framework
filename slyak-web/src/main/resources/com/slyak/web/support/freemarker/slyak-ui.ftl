@@ -1,8 +1,12 @@
 <#ftl strip_whitespace=true>
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#--attributes for dom-->
+<#macro cssAndJs>
+    <@slyak.js url=["/webjars/slyak-web/slyak-ui.js"]/>
+</#macro>
+
 <#macro handlebars>
-    <@slyak.js url=["/webjars/handlebars/handlebars.min.js"]/>
+    <@slyak.js url=["/webjars/jquery-sortable/js/jquery-sortable.min.js"]/>
 <script>
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
         switch (operator) {
@@ -31,13 +35,18 @@
         }
     });
 </script>
-
 </#macro>
 <#macro fontasome>
     <@slyak.css url="/webjars/font-awesome/web-fonts-with-css/css/fontawesome-all.css"/>
 </#macro>
 
-<#macro a href attributes...><a href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
+<#macro jqueryui>
+    <@slyak.css url="/webjars/jquery-ui/jquery-ui.min.css"/>
+    <@slyak.js url="/webjars/jquery-ui/jquery-ui.min.js"/>
+</#macro>
+
+<#macro a href test={} attributes...><a href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
+
 <#macro form action method="POST" enctype="application/x-www-form-urlencoded" attributes...>
 <form action="<@slyak.query url=action/>" method="${method}" autocomplete="off"
       enctype="${enctype}"<@slyak.attributes values=attributes/>>
@@ -144,7 +153,7 @@
     <@wrapScript wrap=wrap>
     window.iframeAutoFit = window.iframeAutoFit || function (frame) {
     var container = frame.contentWindow || frame.contentDocument.parentWindow;
-    frame.height =  container.document.documentElement.scrollHeight || container.document.body.scrollHeight;
+    frame.height = container.document.documentElement.scrollHeight || container.document.body.scrollHeight;
     }
     </@wrapScript>
 </#macro>

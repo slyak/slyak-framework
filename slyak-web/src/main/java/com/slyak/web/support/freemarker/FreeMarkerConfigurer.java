@@ -136,7 +136,7 @@ public class FreeMarkerConfigurer extends org.springframework.web.servlet.view.f
                 }
             }
         }
-        FmContext.cfg = config;
+        FmContext.setConfiguration(config);
     }
 
     public void setImplicitFile(String implicitFile) {
