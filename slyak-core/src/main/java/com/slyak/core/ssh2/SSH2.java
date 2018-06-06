@@ -66,34 +66,34 @@ public class SSH2 {
         return execCommand("test -d " + dir + " || mkdir -p " + dir, SimpleStdCallback.INSTANCE);
     }
 
-    public void scp(File file, String newFileName, String remoteTarget) {
-        scp(file, newFileName, remoteTarget, true);
+    public void copy(File file, String newFileName, String remoteTarget) {
+        copy(file, newFileName, remoteTarget, true);
     }
 
     @SneakyThrows
-    public void scp(File file, String newFileName, String remoteTarget, boolean overwrite) {
+    public void copy(File file, String newFileName, String remoteTarget, boolean overwrite) {
         String fileName = newFileName == null ? FilenameUtils.getName(file.getPath()) : newFileName;
         @Cleanup FileInputStream is = new FileInputStream(file);
-        scp(is, fileName, remoteTarget, overwrite);
+        copy(is, fileName, remoteTarget, overwrite);
     }
 
-    public void scp(String fileFullPath, String newFileName, String remoteTarget) {
-        scp(new File(fileFullPath), newFileName, remoteTarget, true);
-    }
-
-    @SneakyThrows
-    public void scp(String fileFullPath, String newFileName, String remoteTarget, boolean overwrite) {
-        scp(new File(fileFullPath), newFileName, remoteTarget, overwrite);
-    }
-
-
-    @SneakyThrows
-    public void scp(InputStream is, String newFileName, String remoteDirectory) {
-        scp(is, newFileName, remoteDirectory, true);
+    public void copy(String fileFullPath, String newFileName, String remoteTarget) {
+        copy(new File(fileFullPath), newFileName, remoteTarget, true);
     }
 
     @SneakyThrows
-    public void scp(InputStream is, String newFileName, String remoteDirectory, boolean overwrite) {
+    public void copy(String fileFullPath, String newFileName, String remoteTarget, boolean overwrite) {
+        copy(new File(fileFullPath), newFileName, remoteTarget, overwrite);
+    }
+
+
+    @SneakyThrows
+    public void copy(InputStream is, String newFileName, String remoteDirectory) {
+        copy(is, newFileName, remoteDirectory, true);
+    }
+
+    @SneakyThrows
+    public void copy(InputStream is, String newFileName, String remoteDirectory, boolean overwrite) {
         if (!overwrite) {
             String exists = execCommand("test -f " + remoteDirectory + "/" + newFileName + " && echo exists");
             if (StringUtils.contains(exists, "exists")) {
@@ -141,7 +141,7 @@ public class SSH2 {
                     mkdir(remote + File.separator + file);
                     scpDirectory(fullName, rdir);
                 } else {
-                    scp(fullName, null, remote);
+                    copy(fullName, null, remote);
                 }
             }
         }
