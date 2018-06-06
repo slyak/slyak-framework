@@ -28,7 +28,7 @@ public class SSH2 {
 
     private boolean authSuccess = false;
 
-    private String mode = "0750";
+    private String mode = "0755";
 
     private SSH2() {
     }
@@ -116,7 +116,7 @@ public class SSH2 {
                 sftPv3Client.write(handle, offset, buffer, 0, i);
                 offset += i;
             }
-            sftPv3Client.chmod(path, 750);
+            sftPv3Client.chmod(path, Integer.valueOf(mode));
             sftPv3Client.closeFile(handle);
             if (handle.isClosed()) {
                 sftPv3Client.close();
