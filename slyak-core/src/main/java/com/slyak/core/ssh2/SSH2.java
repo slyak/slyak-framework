@@ -1,7 +1,6 @@
 package com.slyak.core.ssh2;
 
 import com.slyak.core.util.IOUtils;
-import com.slyak.core.util.StringUtils;
 import com.trilead.ssh2.*;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -10,9 +9,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.Assert;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
- * .
+ * TODO and copy progress.
  *
  * @author stormning 2018/4/25
  * @since 1.3.0
@@ -29,6 +29,8 @@ public class SSH2 {
     private boolean authSuccess = false;
 
     private String mode = "0755";
+
+    private static final int SCP_MAX_LENGTH = 32768;
 
     private SSH2() {
     }
@@ -66,50 +68,33 @@ public class SSH2 {
         return execCommand("test -d " + dir + " || mkdir -p " + dir, SimpleStdCallback.INSTANCE);
     }
 
-    public void copy(File file, String newFileName, String remoteTarget) {
-        copy(file, newFileName, remoteTarget, true);
+    public String md5(String file) {
+        return execCommand("test -f " + file + "  && md5sum " + file + " | cut -d ' ' -f1");
     }
 
     @SneakyThrows
-    public void copy(File file, String newFileName, String remoteTarget, boolean overwrite) {
+    public void copy(File file, String newFileName, String remoteTarget) {
         String fileName = newFileName == null ? FilenameUtils.getName(file.getPath()) : newFileName;
         @Cleanup FileInputStream is = new FileInputStream(file);
-        copy(is, fileName, remoteTarget, overwrite);
+        copy(is, fileName, remoteTarget);
     }
 
     public void copy(String fileFullPath, String newFileName, String remoteTarget) {
-        copy(new File(fileFullPath), newFileName, remoteTarget, true);
+        copy(new File(fileFullPath), newFileName, remoteTarget);
     }
-
-    @SneakyThrows
-    public void copy(String fileFullPath, String newFileName, String remoteTarget, boolean overwrite) {
-        copy(new File(fileFullPath), newFileName, remoteTarget, overwrite);
-    }
-
 
     @SneakyThrows
     public void copy(InputStream is, String newFileName, String remoteDirectory) {
-        copy(is, newFileName, remoteDirectory, true);
-    }
-
-    @SneakyThrows
-    public void copy(InputStream is, String newFileName, String remoteDirectory, boolean overwrite) {
-        if (!overwrite) {
-            String exists = execCommand("test -f " + remoteDirectory + "/" + newFileName + " && echo exists");
-            if (StringUtils.contains(exists, "exists")) {
-                return;
-            }
-        }
         Assert.notNull(newFileName, "file name must be set");
         mkdir(remoteDirectory);
-
+        String path = remoteDirectory + "/" + newFileName;
         int available = is.available();
-        if (available > 1 /*500 * 1024 * 1024*/) {
-            //if is gt than 500M ,use sftpClient
+        if (available > SCP_MAX_LENGTH) {
+            //if is larger than SCP_MAX_LENGTH , use sftpClient
             SFTPv3Client sftPv3Client = sftPv3Client();
-            String path = remoteDirectory + "/" + newFileName;
-            SFTPv3FileHandle handle = sftPv3Client.createFile(path);
-            byte[] buffer = new byte[1024 * 4];
+            SFTPv3FileHandle handle = sftPv3Client.createFileTruncate(path);
+            //must be large size for fast copy
+            byte[] buffer = new byte[SCP_MAX_LENGTH];
             int i;
             long offset = 0;
             while ((i = is.read(buffer)) != -1) {
@@ -230,5 +215,12 @@ public class SSH2 {
         Connection conn = new Connection(hostname, port);
         conn.connect();
         return new SSH2(conn);
+    }
+
+    public static void main(String[] args) throws IOException {
+        SSH2 ssh2 = SSH2.connect("192.168.230.8", 22).auth("root", "123456");
+        ssh2.copy("/Users/stormning/Downloads/test.txt", "test.txt", "/juesttest");
+        System.out.println(ssh2.md5("/juesttest/test.txt"));
+        System.out.println(Objects.equals(ssh2.md5("/juesttest/test2.txt"), ""));
     }
 }
