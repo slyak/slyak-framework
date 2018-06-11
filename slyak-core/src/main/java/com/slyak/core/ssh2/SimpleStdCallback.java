@@ -9,8 +9,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since 1.3.0
  */
 @Slf4j
-public enum SimpleStdCallback implements StdCallback {
-    INSTANCE;
+public class SimpleStdCallback implements StdCallback {
+    public static SimpleStdCallback INSTANCE = new SimpleStdCallback();
+
+    public SimpleStdCallback() {
+    }
 
     @Override
     public void processOut(String out) {
@@ -21,4 +24,10 @@ public enum SimpleStdCallback implements StdCallback {
     public void processError(String error) {
         log.info(error);
     }
+
+    @Override
+    public void setExistStatus(Integer exitStatus) {
+        log.info("Exist status {}", exitStatus);
+    }
+
 }

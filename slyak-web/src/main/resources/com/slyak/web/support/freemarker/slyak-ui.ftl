@@ -45,7 +45,8 @@
     <@slyak.js url="/webjars/jquery-ui/jquery-ui.min.js"/>
 </#macro>
 
-<#macro a href test={} attributes...><a href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
+<#macro a href test={} attributes...><a
+        href="<@slyak.query url=href/>"<@slyak.attributes values=attributes/>><#nested /></a></#macro>
 
 <#macro form action method="POST" enctype="application/x-www-form-urlencoded" attributes...>
 <form action="<@slyak.query url=action/>" method="${method}" autocomplete="off"
@@ -95,8 +96,22 @@
     </nav>
     </#if>
 </#macro>
+<#macro checkbox name value attributes...>
+    <#assign id><@slyak.randomAlphanumeric/></#assign>
+    <#assign idChk=id+"_chk"/>
+    <#assign idField=id+"_field"/>
+<input type="checkbox" <#if value==true>checked</#if> id="${idChk}"<@slyak.attributes/>>
+<input type="hidden" name="${name}" value="${value!false}" id="${idField}">
+<script>
+    $(function () {
+        $("#${idChk}").click(function () {
+            $("#${idField}").val($("#${idChk}").is(":checked"));
+        })
+    });
+</script>
+</#macro>
 <#macro table page struct={'thead':[{'title':'test','field':'test','attrs':{'with':'100%'}}]} showNumber=9 size=20 relativeUrl="" checkbox=false checkedIds=[] idField="" attributes...>
-<#assign tableId>table_<@slyak.randomAlphanumeric/></#assign>
+    <#assign tableId>table_<@slyak.randomAlphanumeric/></#assign>
 <table<@slyak.attributes values=attributes/> id="${tableId}">
     <thead>
     <tr>
@@ -115,7 +130,8 @@
             <#list 0..struct.thead?size-1 as idx>
                 <#assign obj=page.content[idx]/>
                 <#if checkbox>
-                <td><input class="singleCheck" name="id" value="${obj[idField]}" type="checkbox" <#if checkedIds?seq_contains(obj[idField])>checked</#if>/></td>
+                <td><input class="singleCheck" name="id" value="${obj[idField]}" type="checkbox"
+                           <#if checkedIds?seq_contains(obj[idField])>checked</#if>/></td>
                 </#if>
             <td>${obj[struct.thead[idx].field]}</td>
             </#list>
@@ -128,9 +144,9 @@
     <@pagination value=page showNumber=showNumber relativeUrl=relativeUrl  size=size />
 <script>
     var table = $("#${tableId}");
-    table.find(".checkAll").("click",function () {
+    table.find(".checkAll").("click", function () {
         var checked = $(this).prop("checked");
-        if (checked){
+        if (checked) {
             table.find(".singleCheck").prop('checked');
         } else {
             table.find(".singleCheck").removeProp('checked');
@@ -186,15 +202,15 @@ return iframe;
 <#macro formatFileSize wrap=true>
     <@wrapScript wrap=wrap>
     window.formatFileSize = window.formatFileSize || function (fileSize){
-        var arrUnit = ["B", "K","M", "G", "T", "P"];
-        var powerIndex = Math.log2(fileSize) / 10;
-        powerIndex = Math.floor(powerIndex);
-        // index should in the unit range!
-        var len = arrUnit.length;
-        powerIndex = powerIndex < len ? powerIndex : len - 1;
-        var sizeFormatted = fileSize / Math.pow(2, powerIndex * 10
-        sizeFormatted = sizeFormatted.toFixed(2);
-        return sizeFormatted + " " + arrUnit[powerIndex];
+    var arrUnit = ["B", "K","M", "G", "T", "P"];
+    var powerIndex = Math.log2(fileSize) / 10;
+    powerIndex = Math.floor(powerIndex);
+    // index should in the unit range!
+    var len = arrUnit.length;
+    powerIndex = powerIndex < len ? powerIndex : len - 1;
+    var sizeFormatted = fileSize / Math.pow(2, powerIndex * 10
+    sizeFormatted = sizeFormatted.toFixed(2);
+    return sizeFormatted + " " + arrUnit[powerIndex];
     }
     </@wrapScript>
 </#macro>

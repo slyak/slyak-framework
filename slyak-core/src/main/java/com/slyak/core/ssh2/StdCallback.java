@@ -10,4 +10,6 @@ public interface StdCallback {
     void processOut(String out);
 
     void processError(String error);
+
+    void setExistStatus(Integer exitStatus);
 }

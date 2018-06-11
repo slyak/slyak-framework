@@ -134,11 +134,12 @@ public class SSH2 {
 
     public String execCommand(String command) {
         StringBuilder builder = new StringBuilder();
-        execCommand(command, new StdCallback() {
+        execCommand(command, new SimpleStdCallback() {
             boolean hasPreLine = false;
 
             @Override
             public void processOut(String out) {
+                super.processOut(out);
                 if (hasPreLine) {
                     builder.append("\n");
                 }
@@ -148,6 +149,7 @@ public class SSH2 {
 
             @Override
             public void processError(String error) {
+                super.processOut(error);
                 if (hasPreLine) {
                     builder.append("\n");
                 }
@@ -184,6 +186,7 @@ public class SSH2 {
                     callback.processError(error);
                 }
             }
+            callback.setExistStatus(session.getExitStatus());
         } catch (Exception e) {
             log.error("Error occurred {}", e);
         } finally {
