@@ -52,28 +52,13 @@ public class ExecutorUtils {
         try {
             latch.await(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error("Competition failed, error is {}", e);
             return null;
         }
         return results;
     }
 
-    public static class ResultHolder<R> {
-        R result;
-
-        ResultHolder() {
-        }
-
-        R getResult() {
-            return result;
-        }
-
-        void setResult(R result) {
-            this.result = result;
-        }
-    }
-
     public static void main(String[] args) {
-        System.out.println(ExecutorUtils.startCompetition((Competition<Double>) index -> Math.random(), 10, 0, 100));
+        System.out.println(ExecutorUtils.startCompetition(index -> Math.random(), 10, 0, 100));
     }
 }
