@@ -42,9 +42,10 @@ public class ExecutorUtils {
                             results.add(result);
                         }
                     }
-                    latch.countDown();
                 } catch (Exception e) {
                     log.error("Competition failed, error is {}", e);
+                } finally {
+                    latch.countDown();
                 }
             });
         }
