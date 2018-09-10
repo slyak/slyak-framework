@@ -101,7 +101,7 @@
     <#assign idChk=id+"_chk"/>
     <#assign idField=id+"_field"/>
 <input type="checkbox" <#if value==true>checked</#if> id="${idChk}"<@slyak.attributes/>>
-<input type="hidden" name="${name}" value="${value!false}" id="${idField}">
+<input type="hidden" name="${name}" value="${value?has_content?string("${value}","false")}" id="${idField}">
 <script>
     $(function () {
         $("#${idChk}").click(function () {
