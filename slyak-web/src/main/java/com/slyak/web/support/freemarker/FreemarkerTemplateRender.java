@@ -28,8 +28,6 @@ public class FreemarkerTemplateRender {
 
     private StringTemplateLoader stringTemplateLoader = new StringTemplateLoader();
 
-    private static final Object LOCK = new Object();
-
     public FreemarkerTemplateRender(Configuration configuration) {
         TemplateLoader templateLoader = configuration.getTemplateLoader();
         if (templateLoader == null) {
@@ -65,23 +63,22 @@ public class FreemarkerTemplateRender {
         try {
             return configuration.getTemplate(tpl);
         } catch (IOException e) {
-            LOGGER.error("Template {0} not found", tpl);
+            LOGGER.info("Template {} not found", tpl);
             return null;
         }
     }
 
     private Template createIfAbsent(String content) {
         String key = Hashing.md5().hashBytes(content.getBytes()).toString();
-        Template template = getTemplate(key);
-        if (template == null) {
-            synchronized (LOCK) {
+        Object templateSource = stringTemplateLoader.findTemplateSource(key);
+        if (templateSource == null) {
+            synchronized (this) {
                 if (stringTemplateLoader.findTemplateSource(key) == null) {
+                    LOGGER.info("Put string template with key {}", key);
                     stringTemplateLoader.putTemplate(key, content);
                 }
             }
-            return getTemplate(key);
-        } else {
-            return template;
         }
+        return getTemplate(key);
     }
 }

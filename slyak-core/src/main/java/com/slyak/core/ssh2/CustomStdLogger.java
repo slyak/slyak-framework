@@ -14,11 +14,7 @@ public class CustomStdLogger implements StdCallback {
 
     private Logger logger;
 
-    private int lineCount = 0;
-
     private Integer exitStatus = -1;
-
-    private int lastErrorLine = -1;
 
     public CustomStdLogger(Logger logger) {
         this.logger = logger;
@@ -32,24 +28,22 @@ public class CustomStdLogger implements StdCallback {
     public void processOut(String out) {
         logger.info(out);
         log.info(out);
-//        lineCount++;
     }
 
     @Override
     public void processError(String error) {
         logger.error(error);
         log.error(error);
-//        this.lastErrorLine = lineCount;
-//        lineCount++;
     }
 
     @Override
     public void setExistStatus(Integer exitStatus) {
-        this.exitStatus = exitStatus;
+        if (exitStatus != null) {
+            this.exitStatus = exitStatus;
+        }
     }
 
     public boolean hasError() {
-//        return lastErrorLine >= 0 && lastErrorLine == lineCount - 1;
         return exitStatus != 0;
     }
 }
