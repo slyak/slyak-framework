@@ -113,6 +113,7 @@
         <module>slyak-web-bootstrap</module>
         <module>slyak-web-ace</module>
         <module>slyak-web-socket</module>
+        <module>slyak-ext-hibernate</module>
     </modules>
 
 </project>
