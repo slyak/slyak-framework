@@ -149,7 +149,7 @@ public class SSH2 {
 
             @Override
             public void processError(String error) {
-                super.processOut(error);
+                super.processError(error);
                 if (hasPreLine) {
                     builder.append("\n");
                 }
