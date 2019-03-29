@@ -3,12 +3,13 @@
     <parent>
         <groupId>com.slyak</groupId>
         <artifactId>slyak-dependencies</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
         <relativePath>../slyak-dependencies</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>slyak-core</artifactId>
+  <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>slyak framework core</description>
