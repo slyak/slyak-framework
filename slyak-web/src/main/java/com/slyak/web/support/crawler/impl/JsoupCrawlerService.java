@@ -11,6 +11,7 @@ import com.slyak.web.support.crawler.exception.InvalidSessionException;
 import com.slyak.web.support.crawler.exception.UnreachableException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jsoup.Connection;
@@ -289,12 +290,14 @@ public abstract class JsoupCrawlerService implements CrawlerService<Document> {
 
     protected abstract boolean isSessionValid(Connection.Response response);
 
+    @SneakyThrows
     private Connection.Response executeWithRetry(Connection connection, int count) {
         try {
             return execute(connection);
         } catch (UnreachableException ue) {
             int retry = getRetry();
             if (retry > 0 && count < this.retry) {
+                Thread.sleep(5000);
                 log.debug("Connection :{} retrying {} times...", connection, count + 1);
                 return executeWithRetry(connection, count + 1);
             }
