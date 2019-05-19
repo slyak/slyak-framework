@@ -50,9 +50,9 @@ public class GlobalInteceptor extends HandlerInterceptorAdapter implements Initi
     }
 
     private List<Menu> getMenus() {
-        if (DevHelper.isDev()) {
+        /*if (DevHelper.isDev()) {
             return getMenusFromConfig(DevHelper.getSourceCodeLocation() + "/src/main/resources/menu.json");
-        }
+        }*/
         return menus;
     }
 
