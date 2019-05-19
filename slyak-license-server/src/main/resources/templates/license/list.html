@@ -7,7 +7,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">失效时间</label>
                     <div class="layui-input-inline">
-                            <div th:replace="fragments:: dict(code='date',fieldName='expire',fieldValue=${#request.getParameter('expire')},multi=false)"></div>
+                        <div th:replace="fragments:: dict(code='date',fieldName='expire',fieldValue=${#request.getParameter('expire')},multi=false)"></div>
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -40,6 +40,8 @@
             <tr th:if="${!page.hasContent()}">
                 <td colspan="2" class="text-center">暂无记录</td>
             </tr>
+            </tbody>
         </table>
     </div>
 </div>
+</html>

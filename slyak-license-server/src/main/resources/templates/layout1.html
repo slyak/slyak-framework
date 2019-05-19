@@ -3,11 +3,11 @@
 <div th:fragment="content">
     <div class="layui-layout layui-layout-admin">
         <div class="layui-header">
-            <div class="layui-logo"><img src="/static/images/logo.png" style="width:70%;"></div>
+            <div class="layui-logo"><img src="/static/images/logo.png" style="width:70%;"/></div>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item">
                     <a href="javascript:;">
-                        <img src="/static/images/user.jpg" class="layui-nav-img">
+                        <img src="/static/images/user.jpg" class="layui-nav-img"/>
                         管理员
                     </a>
                     <dl class="layui-nav-child">
@@ -27,6 +27,7 @@
                         <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menu.children)}">
                             <dd th:class="${subMenu.checked}?'layui-this'" th:each="subMenu: ${menu.children}"><a th:href="${subMenu.url}" th:text="${subMenu.title}">子导航</a></dd>
                         </dl>
+                    </li>
                 </ul>
             </div>
         </div>

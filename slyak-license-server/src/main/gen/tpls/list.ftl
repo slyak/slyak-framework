@@ -55,6 +55,8 @@
             <tr th:if="${r'${!page.hasContent()}'}">
                 <td colspan="${entity.columns?size+1}" class="text-center">暂无记录</td>
             </tr>
+            </tbody>
         </table>
     </div>
 </div>
+</html>

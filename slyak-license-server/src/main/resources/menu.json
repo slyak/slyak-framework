@@ -1,0 +1,15 @@
+[
+  {
+    "title": "授权管理",
+    "icon": "layui-icon-form",
+    "children": [
+      {
+        "title": "授权列表",
+        "url": "/license/list",
+        "patterns": [
+          "/license/*"
+        ]
+      }
+    ]
+  }
+]
