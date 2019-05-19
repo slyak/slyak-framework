@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout1">
+<!--/*@thymesVar id="license" type="com.slyak.license.domain.License"*/-->
+<div th:fragment="right">
+    <div class="layui-card p15">
+        <div class="layui-card-header" th:text="${license.id!=null}?'编辑':'新增'">
+            编辑
+        </div>
+        <div class="layui-card-body">
+            <form class="layui-form">
+                <input type="hidden" name="id" th:value="${license.id}" th:if="${license!=null}">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">失效时间</label>
+                        <div class="layui-input-block">
+                                <div th:replace="fragments:: dict(code='date',fieldName='expire',fieldValue=${license.expire},multi=false)"></div>
+                        </div>
+                    </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" type="button" lay-submit="" lay-filter="submitForm">保存</button>
+                        <a class="layui-btn layui-btn-primary" href="list">返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        $(function () {
+            var isEdit = [[${license.id!=null}]];
+            layui.use('form', function () {
+                var form = layui.form;
+                form.on('submit(submitForm)', function (data) {
+                    var field = data.field;
+                    $.post('save', field, function (data) {
+                        if (data.success) {
+                            if (isEdit){
+                                layer.msg('保存成功', {offset: '120px'});
+                            } else {
+                                location.href = 'list';
+                            }
+                        } else {
+                            layer.msg(data.msg, {offset: '120px'});
+                        }
+                    });
+                    return false;
+                });
+            });
+        });
+    </script>
+</div>

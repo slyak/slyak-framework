@@ -1,0 +1,176 @@
+html {
+    background-color: #ECF0F5;
+}
+
+.search-form .layui-form-label {
+    width: auto;
+}
+
+.layui-btn + .layui-btn {
+    margin-left: 0;
+}
+
+.layui-layout-body {
+    padding: 0;
+}
+
+.content {
+    padding: 15px;
+    background-color: #ECF0F5;
+}
+
+.error-page {
+}
+
+.sub-header, .op-holder {
+    box-sizing: border-box;
+    background-color: #fff;
+    border: none;
+}
+
+.sub-header {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+}
+
+.layui-elem-quote {
+    background-color: #fff;
+    padding: 10px;
+}
+
+.layui-input-block {
+    width: 500px;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb15 {
+    margin-bottom: 15px;
+}
+
+.ml15 {
+    margin-left: 15px;
+}
+
+.mr15 {
+    margin-right: 15px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.p20 {
+    padding: 20px;
+}
+
+.p15 {
+    padding: 15px;
+}
+
+.p10 {
+    padding: 10px;
+}
+
+#pagination-holder {
+    text-align: right;
+}
+
+.frame-layer {
+    cursor: pointer;
+}
+
+form select {
+    visibility: hidden;
+}
+
+.select2 {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 0;
+}
+
+.select2-selection, .select2-container .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #e6e6e6 !important;
+    height: 36px;
+    border-radius: 2px;
+}
+
+.select2-selection__choice {
+    line-height: 22px !important;
+}
+
+.select2-dropdown {
+    border: 1px solid #e6e6e6;
+}
+
+.select2-selection .select2-selection__arrow {
+    height: 36px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 20px;
+}
+
+.select2-selection .select2-selection__rendered {
+    line-height: 36px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__clear{
+    margin-top: 0;
+}
+
+.img-holder {
+    border: 1px solid #ddd;
+    padding: 2px;
+    position: relative;
+}
+
+.img-holder .layui-icon-close {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #8D8D8D;
+    width: 18px;
+    overflow: hidden;
+}
+
+.attach-holder .layui-icon-close {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #8D8D8D;
+    width: 18px;
+    overflow: hidden;
+}
+
+.attach-holder {
+    color: #01AAED;
+}
+
+.img-holder img {
+    width: 100%;
+}
+
+.files {
+    margin-top: 15px;
+}
+
+#menus .layui-nav-child a {
+    padding-left: 53px !important;
+}
+
+#menus .layui-nav-item i {
+    font-size: 18px;
+    padding-right: 15px;
+}

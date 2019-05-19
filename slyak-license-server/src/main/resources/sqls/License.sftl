@@ -1,0 +1,2 @@
+--query
+select * from t_license order by id desc

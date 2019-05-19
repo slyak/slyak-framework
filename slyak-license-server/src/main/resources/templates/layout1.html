@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout0">
+<div th:fragment="content">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo"><img src="/static/images/logo.png" style="width:70%;"></div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="/static/images/user.jpg" class="layui-nav-img">
+                        管理员
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">基本资料</a></dd>
+                        <dd><a href="">安全设置</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">退出</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test" id="menus">
+                    <li th:each="menu: ${session.menus}" th:class="${menu.checked}?'layui-nav-item layui-nav-itemed':'layui-nav-item'">
+                        <a href="javascript:;"><i class="layui-icon" th:classappend="${menu.icon}"></i><span th:text="${menu.title}">父导航</span></a>
+                        <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menu.children)}">
+                            <dd th:class="${subMenu.checked}?'layui-this'" th:each="subMenu: ${menu.children}"><a th:href="${subMenu.url}" th:text="${subMenu.title}">子导航</a></dd>
+                        </dl>
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-body">
+            <div class="sub-header p15">
+            <span class="layui-breadcrumb">
+                <a href="/"><i class="layui-icon layui-icon-home"></i>  首页</a>
+                <a th:if="${session.current_menu}"><cite th:text="${session.current_menu.title}">面包屑</cite></a>
+            </span>
+            </div>
+            <!-- 内容主体区域 -->
+            <div class="content" th:include="::right">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+</html>

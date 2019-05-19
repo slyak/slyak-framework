@@ -1,0 +1,8 @@
+{
+  "repo.ftl": "/src/main/java/com/slyak/license/repository/${entity.name}Repository.java",
+  "query.ftl": "/src/main/java/com/slyak/license/domain/${entity.name}Query.java",
+  "sql.ftl": "/src/main/resources/sqls/${entity.name}.sftl",
+  "controller.ftl": "/src/main/java/com/slyak/license/web/${entity.name}Controller.java",
+  "list.ftl": "/src/main/resources/templates/${entity.name?uncap_first}/list.html",
+  "edit.ftl": "/src/main/resources/templates/${entity.name?uncap_first}/edit.html"
+}

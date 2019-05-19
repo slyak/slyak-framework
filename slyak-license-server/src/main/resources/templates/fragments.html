@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="fileUploader(name,value,preview,max,editable)" th:with="id=${#ids.seq('fileUploader')}">
+    <button type="button" class="layui-btn" th:id="${id}" th:attrappend="disabled=${editable?null: 'disabled'}">
+        <i class="layui-icon">&#xe67c;</i>上传文件
+    </button>
+    <div class="files">
+
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(function () {
+            var max = [[${max}]];
+            var name = [[${name}]];
+            var ids = [[${value}]];
+            var editable = [[${editable}]] || false;
+            var filesHolder = $('#' + [[${id}]]).siblings(".files");
+            var createPreview = function (f) {
+                filesHolder.append(
+                    "<div class='img-holder layui-col-sm4'>" +
+                    (editable ? "<i class='layui-icon layui-icon-close'>&#x1006;</i>" : "") +
+                    "<img src='/api/file/" + f.id + "?preview=true' alt='" + f.name + "'/>" +
+                    "<input type='hidden' name='" + name + "' value='" + f.id + "'>" +
+                    "</div>"
+                );
+            };
+            var createAttachment = function (f) {
+                filesHolder.append(
+                    "<div class='attach-holder layui-col-sm4'>" +
+                    (editable ? "<i class='layui-icon layui-icon-close'>&#x1006;</i>" : "") +
+                    "<a href='/api/file/" + f.id + "'>" + f.name + "</a>" +
+                    "<input type='hidden' name='" + name + "' value='" + f.id + "'>" +
+                    "</div>"
+                );
+            };
+
+            var renderResult = function (result) {
+                if (result) {
+                    for (var i = 0; i < result.data.length; i++) {
+                        var f = result.data[i];
+                        if ([[${preview}]]) {
+                            createPreview(f);
+                        } else {
+                            createAttachment(f);
+                        }
+                    }
+                }
+            };
+
+            //init
+            if (ids && ids.length > 0) {
+                $.get("/api/file/list", {ids: ids}, function (result) {
+                    renderResult(result);
+                })
+            }
+            layui.upload.render({
+                elem: '#' + [[${id}]],
+                url: '/api/file/upload',
+                accept: [[${preview?'image':'file'}]],
+                done: function (result) {
+                    renderResult(result);
+                }
+            });
+
+            $(document).on("click", ".layui-icon-close", function () {
+                var close = $(this);
+                layer.confirm("确定要删除?", function (index) {
+                    close.closest(".layui-col-sm4").remove();
+                    layer.close(index);
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+
+<div th:fragment="pagination(page,limit)">
+    <div id='pagination-holder'></div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(function () {
+            var laypage = layui.laypage;
+            var limit = [[${limit}]];
+            var curr = [[${#request.getParameter('page')}]] || 1;
+            var count = [[${page.totalElements}]];
+            laypage.render({
+                elem: 'pagination-holder' //不用加 # 号
+                , count: count //数据总数，从服务端得到
+                , limit: limit
+                , limits: [limit]
+                , curr: curr
+                , layout: ['prev', 'page', 'next']
+                , jump: function (obj, first) {
+                    var old = location.href;
+                    var replaced;
+                    if (old.indexOf("?") < 0) {
+                        if (obj.curr === 1) {
+                            return;
+                        }
+                        replaced = old + "?";
+                    } else {
+                        replaced = old;
+                    }
+
+                    if (old.indexOf("page") < 0) {
+                        replaced += "&page=" + obj.curr;
+                    } else {
+                        replaced = old.replace(/page=(\d)+/g, "page=" + obj.curr);
+                    }
+                    if (replaced !== old) {
+                        location.href = replaced;
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</div>
+
+<select th:fragment="dict(code,fieldName,fieldValue,multi)" th:name="${fieldName}" class="form-control select2"
+        lay-ignore
+        th:attr="data-code=${code},data-value=${#strings.toString(fieldValue)},multiple=${multi ? 'multiple' : null},data-editable=${editable}"></select>
+</html>
