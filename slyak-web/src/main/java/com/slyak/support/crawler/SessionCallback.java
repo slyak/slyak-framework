@@ -11,5 +11,6 @@ import org.jsoup.Connection;
  */
 public interface SessionCallback {
     void onSessionCreated(CrawlerSession session, Connection.Response response);
+
     void onSessionDestroyed(String sessionId);
 }

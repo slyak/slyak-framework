@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.slyak</groupId>
         <artifactId>slyak-dependencies</artifactId>
@@ -9,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>slyak-core</artifactId>
-  <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>slyak framework core</description>
@@ -32,13 +33,17 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
         </dependency>
-<!--
         <dependency>
-            <groupId>ch.ethz.ganymed</groupId>
-            <artifactId>ganymed-ssh2</artifactId>
-            <version>262</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
--->
+        <!--
+                <dependency>
+                    <groupId>ch.ethz.ganymed</groupId>
+                    <artifactId>ganymed-ssh2</artifactId>
+                    <version>262</version>
+                </dependency>
+        -->
         <!-- https://mvnrepository.com/artifact/org.jenkins-ci/trilead-ssh2 -->
         <dependency>
             <groupId>org.jenkins-ci</groupId>

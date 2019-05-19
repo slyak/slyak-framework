@@ -8,10 +8,10 @@
     ]/>
 </#macro>
 <#macro connect topics>
-<script>
-    (function () {
-        var ss = slyaksocket(<@slyak.json object=topics/>);
-        <#nested />
-    }());
-</script>
+    <script>
+        (function () {
+            var ss = slyaksocket(<@slyak.json object=topics/>);
+            <#nested />
+        }());
+    </script>
 </#macro>

@@ -50,8 +50,8 @@ public interface ConverterAssembler<S, D, K, V> {
     /**
      * 设置源对象值
      *
-     * @param s     源对象
-     * @param d     目标对象
+     * @param s      源对象
+     * @param d      目标对象
      * @param values 值
      */
     void setValues(S s, D d, Map<K, V> values);

@@ -14,11 +14,11 @@ import java.util.Map;
  */
 @Data
 @ToString
-public class Fileinput implements Serializable{
+public class Fileinput implements Serializable {
     //initialPreviewConfig: [
 //    {type: "image", caption: "Image-1.jpg", size: 847000, url: "/amp/project/delFile.do", key: 1},
     String key;
     String caption;
     long size;
-    Map<String,String> extra;
+    Map<String, String> extra;
 }

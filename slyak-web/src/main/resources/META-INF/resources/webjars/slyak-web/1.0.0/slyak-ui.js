@@ -19,7 +19,7 @@ $(function () {
                 if (window[cb]) {
                     window[cb](ret);
                 } else {
-                    var retMsg = eval('('+cb+')');
+                    var retMsg = eval('(' + cb + ')');
                     alert(retMsg[ret]);
                 }
             } else {

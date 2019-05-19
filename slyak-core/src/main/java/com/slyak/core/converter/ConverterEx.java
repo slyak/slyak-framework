@@ -22,7 +22,7 @@ public interface ConverterEx<S, D, ID> extends Converter<S, D> {
 
     D get(ID id);
 
-    Map<ID,D> mget(Collection<ID> ids);
+    Map<ID, D> mget(Collection<ID> ids);
 
     List<ID> getIds(List<S> source);
 }

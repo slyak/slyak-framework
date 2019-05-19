@@ -17,6 +17,6 @@ public class SmartFreemarkerView extends FreeMarkerView {
 
     @Override
     protected void exposeHelpers(Map<String, Object> model, HttpServletRequest request) throws Exception {
-        model.put(SLYAK_REQUEST_CONTEXT,new SlyakRequestContext(request));
+        model.put(SLYAK_REQUEST_CONTEXT, new SlyakRequestContext(request));
     }
 }
