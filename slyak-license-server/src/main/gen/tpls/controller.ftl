@@ -16,32 +16,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/${entity.name?uncap_first}")
 public class ${entity.name}Controller {
 
-    @Autowired
-    private ${entity.name}Repository repo;
+@Autowired
+private ${entity.name}Repository repo;
 
-    @GetMapping("/list")
-    public void list(${entity.name} example, Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", repo.findAll(Example.of(example), pageable));
-    }
+@GetMapping("/list")
+public void list(${entity.name}Query query, Pageable pageable, ModelMap modelMap) {
+modelMap.put("page", repo.query(query, pageable));
+}
 
-    @GetMapping("/edit")
-    public void edit() {
-    }
+@GetMapping("/edit")
+public void edit() {
+}
 
-    @RequestMapping(value = "/save")
-    @ResponseBody
-    public void save(@ModelAttribute("${entity.name?uncap_first}") ${entity.name} ${entity.name?uncap_first}) {
-        repo.save(${entity.name?uncap_first});
-    }
+@RequestMapping(value = "/save")
+@ResponseBody
+public void save(@ModelAttribute("${entity.name?uncap_first}") ${entity.name} ${entity.name?uncap_first}) {
+repo.save(${entity.name?uncap_first});
+}
 
-    @RequestMapping(value = "/delete")
-    @ResponseBody
-    public void delete(@ModelAttribute("${entity.name?uncap_first}") ${entity.name} ${entity.name?uncap_first}) {
-        repo.delete(${entity.name?uncap_first});
-    }
+@RequestMapping(value = "/delete")
+@ResponseBody
+public void delete(@ModelAttribute("${entity.name?uncap_first}") ${entity.name} ${entity.name?uncap_first}) {
+repo.delete(${entity.name?uncap_first});
+}
 
-    @ModelAttribute("${entity.name?uncap_first}")
-    public ${entity.name} get(Long id) {
-        return id == null ? new ${entity.name}() : repo.findOne(id);
-    }
+@ModelAttribute("${entity.name?uncap_first}")
+public ${entity.name} get(Long id) {
+return id == null ? new ${entity.name}() : repo.findOne(id);
+}
 }

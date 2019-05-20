@@ -12,7 +12,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">失效时间</label>
                         <div class="layui-input-block">
-                                <div th:replace="fragments:: dict(code='date',fieldName='expire',fieldValue=${license.expire},multi=false)"></div>
+                            <input type="text" name="expire" th:value="${license.expire}" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-input input-date">
                         </div>
                     </div>
                 <div class="layui-form-item">

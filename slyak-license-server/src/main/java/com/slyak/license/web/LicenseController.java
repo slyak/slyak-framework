@@ -1,9 +1,9 @@
 package com.slyak.license.web;
 
 import com.slyak.license.domain.License;
+import com.slyak.license.domain.LicenseQuery;
 import com.slyak.license.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -20,8 +20,8 @@ public class LicenseController {
     private LicenseRepository repo;
 
     @GetMapping("/list")
-    public void list(License license, Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", repo.findAll(Example.of(license), pageable));
+    public void list(LicenseQuery query, Pageable pageable, ModelMap modelMap) {
+        modelMap.put("page", repo.query(query, pageable));
     }
 
     @GetMapping("/edit")

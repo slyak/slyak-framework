@@ -55,6 +55,18 @@
 			<artifactId>fastjson</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
@@ -79,6 +91,18 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 			<version>2.6.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.slyak</groupId>
+			<artifactId>spring-boot-starter-jpa-extra</artifactId>
+			<version>2.1.1.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.slyak</groupId>
+			<artifactId>spring-data-jpa-extra</artifactId>
+			<version>2.1.21.RELEASE</version>
 		</dependency>
 	</dependencies>
 

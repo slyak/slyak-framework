@@ -7,7 +7,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">失效时间</label>
                     <div class="layui-input-inline">
-                        <div th:replace="fragments:: dict(code='date',fieldName='expire',fieldValue=${#request.getParameter('expire')},multi=false)"></div>
+                        <input type="text" name="expire" th:value="${#request.getParameter('expire')}" lay-verify="" autocomplete="off" placeholder="请输入" class="layui-input input-date"/>
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -31,7 +31,7 @@
             <tbody>
             <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<com.slyak.license.domain.License>"*/-->
             <tr th:each="item: ${page.content}">
-                <td th:text="${item.expire.title}">测试</td>
+                <td th:text="${item.expire}">测试</td>
                 <td>
                     <a class="layui-btn layui-btn-xs mr10" th:href="'edit?id='+${item.id}">编辑</a>
                     <a class="layui-btn layui-btn-xs mr10 confirm" th:href="'delete?id='+${item.id}">删除</a>
