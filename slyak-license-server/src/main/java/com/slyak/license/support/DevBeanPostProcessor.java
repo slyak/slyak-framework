@@ -1,8 +1,7 @@
-package com.slyak.core.support;
+package com.slyak.license.support;
 
 import com.google.common.collect.Lists;
 import com.slyak.core.config.livereload.LiveReloadServer;
-import com.slyak.core.util.DevHelper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;

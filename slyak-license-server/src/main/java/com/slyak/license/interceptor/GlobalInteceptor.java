@@ -3,7 +3,7 @@ package com.slyak.license.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
-import com.slyak.core.util.DevHelper;
+import com.slyak.license.support.DevHelper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,9 +50,9 @@ public class GlobalInteceptor extends HandlerInterceptorAdapter implements Initi
     }
 
     private List<Menu> getMenus() {
-        /*if (DevHelper.isDev()) {
+        if (DevHelper.isDev()) {
             return getMenusFromConfig(DevHelper.getSourceCodeLocation() + "/src/main/resources/menu.json");
-        }*/
+        }
         return menus;
     }
 

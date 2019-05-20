@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>pla-parent</artifactId>
-		<groupId>com.lotimg</groupId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath/>
+		<groupId>com.slyak</groupId>
+		<artifactId>slyak-dependencies</artifactId>
+		<version>1.0.6-SNAPSHOT</version>
+		<relativePath>../slyak-dependencies</relativePath>
 	</parent>
 	<artifactId>slyak-license-server</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -15,13 +15,15 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
+		<thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
+		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.slyak</groupId>
 			<artifactId>slyak-core</artifactId>
-			<version>1.0.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -44,7 +46,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -64,18 +73,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.slyak</groupId>
-			<artifactId>spring-boot-starter-jpa-extra</artifactId>
-			<version>2.1.1.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.slyak</groupId>
-			<artifactId>spring-data-jpa-extra</artifactId>
-			<version>2.1.21.RELEASE</version>
 		</dependency>
 
 		<dependency>

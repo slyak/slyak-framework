@@ -20,8 +20,8 @@ public class ${entity.name}Controller {
     private ${entity.name}Repository repo;
 
     @GetMapping("/list")
-    public void list(${entity.name}Query query, Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", repo.query(query, pageable));
+    public void list(${entity.name} example, Pageable pageable, ModelMap modelMap) {
+        modelMap.put("page", repo.findAll(Example.of(example), pageable));
     }
 
     @GetMapping("/edit")

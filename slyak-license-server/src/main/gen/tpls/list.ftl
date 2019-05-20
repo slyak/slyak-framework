@@ -12,7 +12,7 @@
                         <#if c.enumable>
                             <div th:replace="fragments:: dict(code='${c.type?uncap_first}',fieldName='${c.name}',fieldValue=${r'${#request.getParameter('}'${c.name}'${r')}'},multi=false)"></div>
                             <#else >
-                        <input type="text" name="${c.name}" th:value="${r'${#request.getParameter('}'${c.name}'${r')}'}" lay-verify="" autocomplete="off" placeholder="请输入" class="layui-input<#if c.type=="Date"> input-date</#if>">
+                        <input type="text" name="${c.name}" th:value="${r'${#request.getParameter('}'${c.name}'${r')}'}" lay-verify="" autocomplete="off" placeholder="请输入" class="layui-input<#if c.type=="Date"> input-date</#if>"/>
                         </#if>
                     </div>
                 </div>
