@@ -1,6 +1,7 @@
 package com.slyak.web.support.freemarker;
 
 import com.google.common.hash.Hashing;
+import com.slyak.core.util.Codecs;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -69,15 +70,9 @@ public class FreemarkerTemplateRender {
     }
 
     private Template createIfAbsent(String content) {
-        String key = Hashing.md5().hashBytes(content.getBytes()).toString();
-        Object templateSource = stringTemplateLoader.findTemplateSource(key);
-        if (templateSource == null) {
-            synchronized (this) {
-                if (stringTemplateLoader.findTemplateSource(key) == null) {
-                    LOGGER.info("Put string template with key {}", key);
-                    stringTemplateLoader.putTemplate(key, content);
-                }
-            }
+        String key = Codecs.hash(content);
+        if (stringTemplateLoader.findTemplateSource(key) == null) {
+            stringTemplateLoader.putTemplate(key, content);
         }
         return getTemplate(key);
     }

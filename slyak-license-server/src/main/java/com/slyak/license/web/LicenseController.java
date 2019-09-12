@@ -1,5 +1,6 @@
 package com.slyak.license.web;
 
+import com.slyak.core.util.StringUtils;
 import com.slyak.license.domain.License;
 import com.slyak.license.domain.LicenseQuery;
 import com.slyak.license.repository.LicenseRepository;
@@ -42,6 +43,6 @@ public class LicenseController {
 
     @ModelAttribute("license")
     public License get(String id) {
-        return id == null ? new License() : repo.findOne(id);
+        return StringUtils.isBlank(id) ? new License() : repo.findOne(id);
     }
 }

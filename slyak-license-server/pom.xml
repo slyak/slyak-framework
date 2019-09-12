@@ -3,10 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.slyak</groupId>
-		<artifactId>slyak-dependencies</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
-		<relativePath>../slyak-dependencies</relativePath>
+		<!--http://platform.spring.io/platform/-->
+		<groupId>io.spring.platform</groupId>
+		<artifactId>platform-bom</artifactId>
+		<version>Brussels-SR16</version>
+		<relativePath/>
 	</parent>
 	<artifactId>slyak-license-server</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -24,6 +25,7 @@
 		<dependency>
 			<groupId>com.slyak</groupId>
 			<artifactId>slyak-core</artifactId>
+			<version>1.0.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,6 +55,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
+			<version>1.2.55</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -103,6 +106,12 @@
 			<groupId>com.slyak</groupId>
 			<artifactId>spring-data-jpa-extra</artifactId>
 			<version>2.1.21.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>1.5.19.RELEASE</version>
 		</dependency>
 	</dependencies>
 
