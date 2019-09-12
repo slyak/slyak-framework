@@ -52,7 +52,7 @@ public class FreemarkerTemplateRender {
         try {
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (IOException e) {
-            LOGGER.error("Template {0} not found", template.getName());
+            LOGGER.error("Template {} not found", template.getName());
         } catch (TemplateException e) {
             LOGGER.error("Render template error", e);
         }
